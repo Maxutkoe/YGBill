@@ -471,7 +471,8 @@ tg.expand();
 
 function yyyy(){
 	let api = new XMLHttpRequest();
-    const url = `https://jsonapi.partner2.yandex.com/v1/resources?fields[13260314]=title&apikey=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA`;
+    const url = `https://partner2.yandex.ru/api/statistics/get.json?oauth_token=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA&lang=ru&pretty=1&level=advnet_context_on_site&field=direct_context_clicks&field=direct_context_shows&field=rtb_block_all_hits&field=partner_wo_nds&period=today`;
+    //https://oauth.yandex.ru/verification_code#access_token=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA&token_type=bearer&expires_in=31528306&cid=vw4tuxanj28dm7kp29ezn5zpg4
 
         api.open('GET', url, true);
         api.responseType = "json";
