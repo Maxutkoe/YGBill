@@ -438,12 +438,9 @@ a {
     <script>
 let tg = window.Telegram.WebApp;
 
-let activeMining = false;
-let lst = 0.0001 + parseFloat(localStorage.getItem("opop")); //lusdt
-let data = 0;
-let blocks = 0;
-let wallet = "";
-let pprem = "";
+
+let lst = 0.0001; //lusdt
+
 tg.MainButton.text = "Mine";
 tg.MainButton.color = "#000";
 tg.MainButton.textColor = "#fff";
@@ -469,62 +466,13 @@ tg.MainButton.onClick(function(){
 tg.expand();
 
 
-function yyyy(){
-	let api = new XMLHttpRequest();
-    const url = `https://partner2.yandex.ru/api/statistics/get.json?oauth_token=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA&lang=ru&pretty=1&level=advnet_context_on_site&field=direct_context_clicks&field=direct_context_shows&field=rtb_block_all_hits&field=partner_wo_nds&period=today`;
-    //https://oauth.yandex.ru/verification_code#access_token=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA&token_type=bearer&expires_in=31528306&cid=vw4tuxanj28dm7kp29ezn5zpg4
 
-        api.open('GET', url, true);
-        api.responseType = "json";
-        api.onload = function(){
-            const status = api.status;
-            if(status == 200){
-                // console.log(api.response.addresses[aroundom(5, 200).toFixed(0)].address);
-				//wallet = api.response.addresses[aroundom(5, 200).toFixed(0)].address;
-				console.log(api.response);
-				return wallet;
-
-			}
-			else{
-				console.log("F");
-			}
-		}
-		api.send();
-		return wallet;
-
-	
-}
 
 function random(max) {
   return Math.floor(Math.random() * max);
 }
 function aroundom(min, max) {
   return Math.random() * (max - min) + min;
-}
-
-function getRandomWallet(){
-	let api = new XMLHttpRequest();
-    const url = `https://tonapi.io/v2/jettons/EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs/holders`;
-
-        api.open('GET', url, true);
-        api.responseType = "json";
-        api.onload = function(){
-            const status = api.status;
-            if(status == 200){
-                // console.log(api.response.addresses[aroundom(5, 200).toFixed(0)].address);
-				wallet = api.response.addresses[aroundom(5, 200).toFixed(0)].address;
-				console.log(wallet);
-				return wallet;
-
-			}
-			else{
-				console.log("F");
-			}
-		}
-		api.send();
-		return wallet;
-
-	
 }
 
 window.addEventListener("load", (event) => {
@@ -535,167 +483,9 @@ window.addEventListener("load", (event) => {
 });
 
 window.setInterval(function(){
-    document.getElementById("usdt").innerHTML = `<span class="fancy">${lst.toFixed(2)} USDT</span>`;
+    document.getElementById("usdt").innerHTML = `<span class="fancy">${lst} MKT</span>`;
+    getMktTokens();
 }, 1000);
-
-function setTgPrem(prem){
-  cloudStorage = tg.CloudStorage; 
-        cloudStorage.setItem("prem", prem, (error, result) => {
-            if(error){
-              console.error("Error", error);
-            }
-            else{
-              console.log(result);
-            }
-        });
-
-}
-function getTgPrem(){
-  cloudStorage = tg.CloudStorage; 
-  cloudStorage.getItem("prem", (error, success) => {
-    if(error){
-      console.error("Error", error);
-    }
-    else{
-      if(success == "yes"){
-        console.log(success);
-        tg.MainButton.show();
-      }
-      else{
-        console.log("NO");
-        tg.MainButton.hide();
-        let body = document.querySelector("body");
-    let completed = document.createElement("terms");
-    //<div id="terms" style="">
-    const blockComp = document.createElement('modal');
-    blockComp.className = "modal";
-    blockComp.id = "modall";
-
-    completed.id = "terms";
-    completed.style = `
-    position: absolute; top: 0px; width: 100%; height: 100%; z-index: 4; background-color: rgba(0,0,0,0.5); justify-content: center;
-    `;
-    // content.removeChild(block);
-    body.appendChild(completed);
-    completed.appendChild(blockComp);
-    blockComp.innerHTML = `
-	<article class="modal-container">
-		<header class="modal-container-header">
-			<h1 class="modal-container-title">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-					<path fill="none" d="M0 0h24v24H0z" />
-					<path fill="#000" d="M14 9V4H5v16h6.056c.328.417.724.785 1.18 1.085l1.39.915H3.993A.993.993 0 0 1 3 21.008V2.992C3 2.455 3.449 2 4.002 2h10.995L21 8v1h-7zm-2 2h9v5.949c0 .99-.501 1.916-1.336 2.465L16.5 21.498l-3.164-2.084A2.953 2.953 0 0 1 12 16.95V11zm2 5.949c0 .316.162.614.436.795l2.064 1.36 2.064-1.36a.954.954 0 0 0 .436-.795V13h-5v3.949z" />
-				</svg>
-				Terms and Services
-			</h1>
-			
-		</header>
-		<section class="modal-container-body rtf">
-			<h2>Quarum ambarum rerum cum medicinam pollicetur, luxuriae licentiam pollicetur.</h2>
-
-			<p>This project is made for the development of the cryptocurrency industry. In this application, you will be able to use your Internet to earn USDT. Mining takes place in such a way that you take ready-made transactions, check - it depends on the Internet, and get USDT. </p>
-
-			<h3>Ut proverbia non nulla veriora sint quam vestra dogmata.</h3>
-
-			<p>The essence of the project is to monetize your Internet, in a beautiful and convenient Telegram application, and quickly withdraw USDT to your wallet - no need to wait for the distribution of tokens. </p>
-
-			<p>Each block has its own information, you can click on it and see,
-  Hash, Wallet address, blockId, time. All this data is taken from the TonViewerAPI website. So if you see your wallet, know that you are checking your transaction that you made once </p>
-
-			<h2>An hoc usque quaque, aliter in vita?</h2>
-			<ol>
-				<li>The rarest block is the "Broken Gold Block". </li>
-				<li>Because I (the Creator of the application) have never seen such a block in all the tests.</li>
-				<li>If you see it, take a screenshot immediately and send it to the chat.</li>
-				<li>USDT is credited to the balance when a new block appears, and you can withdraw them immediately.</li>
-			</ol>
-
-			<p>This type of mining is called "The Checking". Its essence is to double-check old transactions. It does not require high capacities, as it is not a real Mining. </p>
-
-			<!---<h3>Claudii libidini, qui tum erat summo ne imperio, dederetur.</h3>
-
-			<p>Eorum enim est haec querela, qui sibi cari sunt seseque diligunt. Cum audissem Antiochum, Brute, ut solebam, cum M. An obliviscimur, quantopere in audiendo in legendoque moveamur, cum pie, cum amice, cum magno animo aliquid factum cognoscimus? Qui igitur convenit ab alia voluptate dicere naturam proficisci, in alia summum bonum ponere? Magni enim aestimabat pecuniam non modo non contra leges, sed etiam legibus partam. Haec mirabilia videri intellego, sed cum certe superiora firma ac vera sint, his autem ea consentanea et consequentia, ne de horum quidem est veritate dubitandum. At, illa, ut vobis placet, partem quandam tuetur, reliquam deserit. Sed utrum hortandus es nobis, Luci, inquit, an etiam tua sponte propensus es? Sed est forma eius disciplinae, sicut fere ceterarum, triplex: una pars est naturae, disserendi altera, vivendi tertia. Nemo enim est, qui aliter dixerit quin omnium naturarum simile esset id, ad quod omnia referrentur, quod est ultimum rerum appetendarum. Quid est, quod ab ea absolvi et perfici debeat? Quod cum accidisset ut alter alterum necopinato videremus, surrexit statim. Tantum dico, magis fuisse vestrum agere Epicuri diem natalem, quam illius testamento cavere ut ageretur. Quod iam a me expectare noli. Quod totum contra est. Semper enim ita adsumit aliquid, ut ea, quae prima dederit, non deserat. </p>
-
-			<h2>When you paid, you must reload this page!</h2>--->
-
-			<p>If you have not connected your wallet and sent a withdrawal request, we will not be able to process your order because there is no data about the wallet. You can successfully connect the wallet and resend the request </p>
-
-		</section>
-		<footer class="modal-container-footer">
-			<button class="button is-ghost" onclick="tg.close()">Exit</button>
-			<button class="button is-primary" onclick="payForPrime()">Pay</button>
-		</footer>
-	</article>
-      `;
-
-	  // });
-      }
-    }
-  });
-
-}
-
-function parseMil(millisec) {
-        var seconds = (millisec / 1000).toFixed(0);
-        var minutes = Math.floor(seconds / 60);
-        var hours = "";
-        if (minutes > 59) {
-            hours = Math.floor(minutes / 60);
-            hours = (hours >= 10) ? hours : "0" + hours;
-            minutes = minutes - (hours * 60);
-            minutes = (minutes >= 10) ? minutes : "0" + minutes;
-        }
-
-        seconds = Math.floor(seconds % 60);
-        seconds = (seconds >= 10) ? seconds : "0" + seconds;
-        if (hours != "") {
-            return hours + ":" + minutes + ":" + seconds;
-        }
-        return minutes + ":" + seconds;
-    }
-
-function Blockchain(blocks, hash, nonce, bytes){
-    this.blocks = blocks;
-    this.hash = hash;
-    this.nonce = nonce;
-    this.bytes = bytes;
-}
-
-Blockchain.prototype.addBlock = function() {
-    this.blocks++;
-    this.bytes = hash("000" + displaySpeed());
-    alert(this.blocks + " 1$ ~ " + ((14256000000000000 / this.bytes) / 60 / 60 / 60 / 24 / 100).toFixed() + " день");
-    alert(this.bytes);
-    alert(navigator.connection.downlink);
-}
-
-        
-function MegaHash(input) {
-let hash = 0;
-for (let i=0; i < input.length; i++) {
-let char = input.charCodeAt(i); 
-hash = (hash << 5) - hash + char; //32
-hash |= 0;
-}
-hash = (hash / 100 / 1000 / 10000 * navigator.connection.downlink) / 20; //из за Infinity ошибка
-if(hash <= 0){
-    hash = navigator.connection.downlink * 0.00565754577458069;
-    return hash;
-}
-else{
-    return hash;
-}
-}
-
-function KiloHash(input) {
-let hash = 0;
-for (let i=0; i < input.length; i++) {
-let char = input.charCodeAt(i); 
-hash = (hash << 5) - hash + char; //32
-hash |= 0;
-}
-return hash / 1000 / 1000 / 10000 * navigator.connection.downlink; //из за Infinity ошибка
-}
 
 function truncate(str, maxlength) {
 
@@ -706,84 +496,6 @@ function truncate(str, maxlength) {
     }
     else
     return str;
-}
-
-
-
-
-function limitedMine(blockData, difficulty, fees, hash, lt) {
-    let nonce = localStorage.getItem("block");
-    let hashvalue;
-    let reward = 0;
-    let start = Date.now();
-
-    const startMining = () => {
-    // for(i = 0; i < 1000; i++){
-    //     text = UnlockPhrase(hash, i, 128);
-    //     console.log(text);
-    // }
-    pass = LockPhrase(lt.toString(2), lt, lt);
-    unpass = UnlockPhrase(pass, lt, lt);
-    if(unpass == lt.toString(2)){
-        console.log(pass + " - " + unpass);
-    }
-    nonce++;
-    localStorage.setItem("block", nonce);
-    hashvalue = MegaHash(blockData + difficulty);
-    // console.log(hashvalue);
-
-    reward = (1.04567 + (hashvalue * difficulty / 5)) / 10; //0.96
-    lst = lst + reward;
-    localStorage.setItem("opop", lst);
-    return reward;
-
-
-    // localStorage.setItem("bbb", lst);
-    };
-
-    // setTimeout(startMining, 100);
-    reward = startMining();
-    return reward;
-
-
-}
-
-function limitedMineGolden(blockData, difficulty, fees, hash, lt) {
-    let nonce = localStorage.getItem("block");
-    let hashvalue;
-    let reward = 0;
-    let start = Date.now();
-
-    const startMining = () => {
-    // for(i = 0; i < 1000; i++){
-    //     text = UnlockPhrase(hash, i, 128);
-    //     console.log(text);
-    // }
-    pass = LockPhrase(lt.toString(2), lt, lt);
-    unpass = UnlockPhrase(pass, lt, lt);
-    if(unpass == lt.toString(2)){
-        console.log(pass + " - " + unpass);
-    }
-    nonce++;
-    localStorage.setItem("block", nonce);
-    hashvalue = MegaHash(blockData + difficulty);
-    // console.log(hashvalue);
-
-    reward = (1.04567 + (hashvalue * difficulty / 5)) * 5 / 10; //0.96
-    lst = lst + (reward * 5);
-    localStorage.setItem("opop", lst);
-    return reward;
-
-
-    // localStorage.setItem("bbb", lst);
-    };
-
-    // setTimeout(startMining, 100);
-    reward = startMining();
-    return reward;
-
-
-
 }
 
 function LockPhrase(block, password){
@@ -807,31 +519,6 @@ function MainButtonDisactiveMining(){
 	activeMining = false;
 	tg.MainButton.onClick(MainButtonActiveMining());
 	tg.expand();
-}
-
-function dgg(){
-// let blockData = "0";
-// let nonce = localStorage.getItem("block");
-// let difficulty = 6;
-// hashvalue = MegaHash(blockData + nonce);
-let telegram = {
-    token: "7793998298:AAFkeTSOtINXDRELuGV1ZWlsif-F3WVowQE", // Your bot's token that got from @BotFather
-    chat_id: "-1002433697688" // The user's(that you want to send a message) telegram chat id
-    };
-const url = `https://api.telegram.org/bot${telegram.token}/sendLocation?chat_id=${telegram.chat_id}&latitude=37.7576793&longitude=22.5076402`; // The url to request
-const urll = `https://api.telegram.org/bot${telegram.token}/getUpdates?chat_id=${telegram.chat_id}`;
-const xht = new XMLHttpRequest();
-xht.open("POST", urll);
-xht.send();
-console.log(xht.responseText);
-// console.log(xht.text);
-// // lstlst = (1.04567 / 6) * (hashvalue / 1000 / 1000 / 1000);
-// // alert(1.04567 + (6 / (hashvalue / 1000 / 1000 / 10000))); //7.4);
-// alert(hashvalue);
-
-// pass = LockPhrase(nonce, "1234");
-// alert(pass);
-// // console.log(txt);
 }
 
 function addBllck(blockId, reward, data, lst, hash, golden, wallet){
@@ -961,94 +648,6 @@ connectToWallet().catch(error => {
         console.error("Error connecting to wallet:", error);
     });
 
-setInterval(async function gg() {
-		let api = new XMLHttpRequest();
-		const wallet = getRandomWallet();
-		console.log(wallet);
-        const url = `https://tonapi.io/v2/blockchain/accounts/${wallet}/transactions`; //UQANL1PP96rxkyGZfo-pgGd6m3tBdpwlz9EFR2scmW7xQaKd
-
-        api.open('GET', url, true);
-        api.responseType = "json";
-        api.onload = function(){
-            const status = api.status;
-            if(status == 200){
-                if(activeMining){
-					
-
-                    golden = random(101);
-                    if(golden >= 90){
-                        test = 1;
-                        const success = api.response.transactions[test].success;
-                        const hash = api.response.transactions[test].hash;
-                        const block = api.response.transactions[test].block.slice(20, 28);
-                        const fees = api.response.transactions[test].total_fees / 1000000;
-                        const difficulty = api.response.transactions[test].lt / 10000000000000;
-                        const lt = api.response.transactions[test].lt;
-
-
-                        let reward = limitedMineGolden(block, difficulty, fees, hash, lt);
-
-
-                        if(success == true){
-                            let data = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-                            addBllck(block, reward, data, lst, hash, "Golden block!", wallet);
-                            console.log("Золотой блок замайнен! #" + block + "\n" + "Ваша награда: " + reward + "$\n" + `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}\n\n` + "Всего: " + lst + "LST");
-                        }
-                        else{
-                            console.log("Вам попался бракованный блок(! #" + block + "\n" + "Ваша награда: " + reward + "$\n");
-                            let data = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-                            addBllck(block, reward, data, lst, hash, "Broken golden block!", wallet);
-                        }
-                        console.log(api.response);
-                    }
-                    else{
-                        test = random(54);
-                        const success = api.response.transactions[test].success;
-                        const hash = api.response.transactions[test].hash;
-                        const block = api.response.transactions[test].block.slice(20, 28);
-                        const fees = api.response.transactions[test].total_fees / 1000000;
-                        const difficulty = api.response.transactions[test].lt / 10000000000000;
-                        const lt = api.response.transactions[test].lt;
-
-
-                        let reward = limitedMine(block, difficulty, 1, hash, lt);
-
-
-                        if(success == true){
-                            console.log("Блок замайнен! #" + block + "\n" + "Ваша награда: " + reward + "$\n" + `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}\n\n` + "Всего: " + lst + "LST");
-                            let data = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-                            addBllck(block, reward, data, lst, hash, "New block!", wallet);
-                        }
-                        else{
-                            console.log("Вам попался бракованный блок(! #" + block + "\n" + "Ваша награда: " + reward + "$\n");
-                            let data = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-                            addBllck(block, reward, data, lst, hash, "Broken block!", wallet);
-                        }
-                        console.log(api.response);
-                    }
-                }
-                else{
-                    console.log("Включите майнинг!");
-
-                }
-            }
-            else{
-                console.log("Не удалось подклчиться");
-            }
-        };
-        api.send();
-        
-		
-
-        // api.onreadystatechange = function(){
-		// 	if(api.readyState === 4) {// request is done
-		// 			console.log(JSON.parse(api.responseText.transactions[i]));
-		// 	}
-		// };
-		// api.open('GET', url);
-		// api.send();
-}, 5000);
-
 
 
     </script>
@@ -1060,7 +659,7 @@ setInterval(async function gg() {
   		<div class="withdraw" onclick="trans()">Withdraw</div>
 		</div>
     <div id="hh">
-  		  <div class="support" onclick="yyyy()">Support Author</div>
+  		  <div class="support" onclick="getMktTokens()">Support</div>
 		</div>
 
 	</div>
@@ -1074,9 +673,9 @@ setInterval(async function gg() {
        <br>
        <br>
        <h1>Latest Transactions</h1>
-	<h2>Today</h2>
+	<h2>There's nothing here yet...</h2>
 	<div id="completed">
-		<h2 style="font-size: 12px;">There's nothing here yet...</h2>
+		<h2 style="font-size: 12px;"></h2>
 	
 	</div>
 
@@ -1086,10 +685,6 @@ setInterval(async function gg() {
 
 
 <script>
-function pp(){
-		const usdt = lst*2500000000;
-    console.log(usdt.toFixed(0));
-}
     const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
         manifestUrl: 'https://raw.githubusercontent.com/Maxutkoe/TheChecker/refs/heads/main/tonconnect/tonconnect-manifest.json',
         buttonRootId: 'ton-connect'
@@ -1108,6 +703,8 @@ function pp(){
             theme: "LIGHT"
         },
     };
+
+
 
 	async function trans(){
 		const usdt = lst*250000000;
@@ -1193,6 +790,37 @@ function pp(){
                     console.error(e);
                 }
     }
+
+    function getMktTokens(){
+	let api = new XMLHttpRequest();
+    let wallet = tonConnectUI.wallet.account.address;
+    const url = `https://tonapi.io/v2/accounts/${wallet}/jettons`;
+    //https://oauth.yandex.ru/verification_code#access_token=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA&token_type=bearer&expires_in=31528306&cid=vw4tuxanj28dm7kp29ezn5zpg4
+
+        api.open('GET', url, true);
+        api.responseType = "json";
+        api.onload = function(){
+            const status = api.status;
+            if(status == 200){
+                // console.log(api.response.addresses[aroundom(5, 200).toFixed(0)].address);
+				//wallet = api.response.addresses[aroundom(5, 200).toFixed(0)].address;
+				//console.log(api.response);
+                for(let i = 0; i < api.response.balances.length; i++){
+                    if(api.response.balances[i].jetton.name == "Mk.Token" && api.response.balances[i].jetton.symbol == "MKT" && api.response.balances[i].jetton.address == "0:27d3109a5591be3d6782463d1db6f218819bb1f704b52b7ce3036a484e00cdca"){
+                        //console.log(api.response.balances[i].jetton.name);
+                        lst = 25.567;//api.response.balances[i].balance / 1000;
+                    }
+                }
+
+			}
+			else{
+				console.log("F");
+			}
+		}
+		api.send();
+
+	
+}
 
 </script>
     </body>
